@@ -183,6 +183,13 @@ async function init() {
   const printArea = document.getElementById("print-area");
 
   if (!id) {
+    // A restricted user always lands here with no ?id= (this is the
+    // dashboard redirect target for their role) — send them on to the
+    // one page they actually have something to do on.
+    if (restricted) {
+      window.location.href = "add-student.html";
+      return;
+    }
     loadingEl.textContent = "لم يتم تحديد الطالب";
     return;
   }

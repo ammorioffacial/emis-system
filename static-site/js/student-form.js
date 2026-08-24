@@ -195,6 +195,11 @@ async function init() {
   const session = await requireAuth();
   if (!session) return;
   const restricted = isDataEntryUser(session);
+
+  document.getElementById("logout-btn").addEventListener("click", async () => {
+    await signOut();
+    window.location.href = "login.html";
+  });
   if (restricted) applyDataEntryRestrictions();
 
   populateSelectOptions();

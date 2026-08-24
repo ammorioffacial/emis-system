@@ -45,21 +45,8 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
-/* Live clock widget */
+/* Live clock pill */
 /* ------------------------------------------------------------------ */
-.clock-blob {
-  position: absolute;
-  top: -30px;
-  left: -20px;
-  width: 140px;
-  height: 140px;
-  border-radius: 9999px;
-  background: radial-gradient(circle, #93c5fd, transparent 70%);
-  filter: blur(30px);
-  opacity: 0.5;
-  pointer-events: none;
-}
-
 #clock-time .colon {
   animation: clock-blink 2s steps(1) infinite;
 }

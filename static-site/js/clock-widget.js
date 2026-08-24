@@ -5,16 +5,13 @@ function initClockWidget() {
   if (!timeEl || !datesEl) return;
 
   const gregorianFormatter = new Intl.DateTimeFormat("ar", {
-    weekday: "long",
     day: "numeric",
-    month: "long",
-    year: "numeric",
+    month: "short",
     numberingSystem: "latn",
   });
   const hijriFormatter = new Intl.DateTimeFormat("ar-SA-u-ca-islamic-umalqura", {
     day: "numeric",
-    month: "long",
-    year: "numeric",
+    month: "short",
     numberingSystem: "latn",
   });
 
@@ -26,13 +23,12 @@ function initClockWidget() {
     const now = new Date();
     const h = pad(now.getHours());
     const m = pad(now.getMinutes());
-    const s = pad(now.getSeconds());
-    timeEl.innerHTML = `${h}<span class="colon">:</span>${m}<span class="colon">:</span>${s}`;
-    datesEl.textContent = `${gregorianFormatter.format(now)} م  •  ${hijriFormatter.format(now)} هـ`;
+    timeEl.innerHTML = `${h}<span class="colon">:</span>${m}`;
+    datesEl.textContent = `${gregorianFormatter.format(now)} م • ${hijriFormatter.format(now)} هـ`;
   }
 
   tick();
-  setInterval(tick, 1000);
+  setInterval(tick, 15000);
 }
 
 initClockWidget();

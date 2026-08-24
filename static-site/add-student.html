@@ -13,7 +13,7 @@
 </head>
 <body class="font-tajawal bg-slate-50 text-slate-900 antialiased">
   <!-- Mobile topbar (hidden on lg+, where the sidebar takes over) -->
-  <header class="no-print flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 lg:hidden">
+  <header id="mobile-topbar" class="no-print flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 lg:hidden" data-admin-only>
     <div class="flex items-center gap-2">
       <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">E</div>
       <p class="text-sm font-bold">نظام EMIS</p>
@@ -24,7 +24,7 @@
   </header>
 
   <!-- Mobile nav drawer -->
-  <div id="mobile-drawer" class="no-print fixed inset-0 z-50 hidden lg:hidden">
+  <div id="mobile-drawer" class="no-print fixed inset-0 z-50 hidden lg:hidden" data-admin-only>
     <div id="mobile-drawer-backdrop" class="absolute inset-0 bg-slate-900/50"></div>
     <div class="absolute inset-y-0 right-0 flex w-72 max-w-[85%] flex-col bg-white shadow-xl">
       <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
@@ -39,7 +39,7 @@
   </div>
 
   <div class="flex min-h-screen">
-    <aside class="no-print hidden w-64 shrink-0 border-l border-slate-200 bg-white lg:flex lg:flex-col">
+    <aside class="no-print hidden w-64 shrink-0 border-l border-slate-200 bg-white lg:flex lg:flex-col" data-admin-only>
       <div class="flex items-center gap-3 border-b border-slate-100 px-6 py-5">
         <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-white text-xl font-bold">E</div>
         <div>
@@ -55,7 +55,7 @@
 
     <main class="flex-1 p-4 sm:p-6 lg:p-8">
       <div class="mx-auto max-w-5xl">
-        <a href="index.html" class="mb-4 flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-brand-700">→ العودة إلى لوحة التحكم</a>
+        <a href="index.html" class="mb-4 flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-brand-700" data-admin-only>→ العودة إلى لوحة التحكم</a>
         <div class="mb-6 flex items-center justify-between">
           <h1 id="page-title" class="text-2xl font-extrabold text-slate-900">إضافة طالب جديد</h1>
           <p id="statistical-number-badge" class="hidden rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500"></p>
@@ -64,7 +64,7 @@
         <form id="student-form" class="space-y-8">
           <p id="form-error" class="hidden rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"></p>
 
-          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" data-admin-only>
             <h2 class="mb-4 text-base font-bold text-slate-900">صورة الطالب</h2>
             <div class="flex flex-col items-center gap-3 sm:flex-row">
               <input type="file" id="photo-input" accept="image/*" class="hidden" />
@@ -125,7 +125,7 @@
             </div>
           </section>
 
-          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" data-admin-only>
             <h2 class="mb-4 text-base font-bold text-slate-900">هوية الطالب</h2>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               <div>
@@ -156,7 +156,7 @@
             </div>
           </section>
 
-          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" data-admin-only>
             <h2 class="mb-4 text-base font-bold text-slate-900">هوية الأب</h2>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               <div>
@@ -187,7 +187,7 @@
             </div>
           </section>
 
-          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" data-admin-only>
             <h2 class="mb-4 text-base font-bold text-slate-900">الحالة الاجتماعية والاقتصادية</h2>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               <div>
@@ -228,7 +228,7 @@
             </div>
           </section>
 
-          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" data-admin-only>
             <h2 class="mb-4 text-base font-bold text-slate-900">البيانات الدراسية</h2>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               <div><label class="lbl">المدرسة السابقة</label><input class="inp" name="previous_school" /></div>
@@ -291,7 +291,7 @@
             </div>
           </section>
 
-          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6" data-admin-only>
             <h2 class="mb-4 text-base font-bold text-slate-900">بيانات العنوان والتواصل</h2>
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               <div><label class="lbl">المحافظة</label><input class="inp" name="governorate" value="المثنى" /></div>

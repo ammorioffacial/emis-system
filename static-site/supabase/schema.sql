@@ -31,7 +31,7 @@ create table if not exists public.students (
   id uuid primary key default gen_random_uuid(),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
-  created_by uuid references auth.users(id),
+  created_by uuid references auth.users(id) default auth.uid(),
 
   -- اسم الطالب الرباعي واللقب
   student_first_name    text not null,
@@ -49,7 +49,9 @@ create table if not exists public.students (
   mother_third_name  text not null,
 
   -- نوع الهوية الطالب
-  student_id_type id_type not null,
+  -- (nullable: a restricted "data entry" user's partial submission may
+  -- omit this — see supabase/add-role-based-access-migration.sql)
+  student_id_type id_type,
   student_national_id_number text,
   student_civil_status_id_number text,
   student_nationality_cert_number text,
@@ -58,7 +60,7 @@ create table if not exists public.students (
   student_issuing_authority text,
 
   -- نوع هوية الاب
-  father_id_type id_type not null,
+  father_id_type id_type,
   father_national_id_number text,
   father_civil_status_id_number text,
   father_nationality_cert_number text,
@@ -69,12 +71,12 @@ create table if not exists public.students (
   birthplace text,
   blood_type blood_type,
   has_special_needs yes_no not null default 'no',
-  economic_level economic_level not null,
+  economic_level economic_level,
   has_social_welfare yes_no not null default 'no',
 
   previous_academic_year text,
   previous_year_result previous_year_result not null default 'new_registration',
-  current_grade text not null,
+  current_grade text,
   section text,
 
   neighborhood text,
@@ -82,7 +84,7 @@ create table if not exists public.students (
   alley text,
   nearest_landmark text,
 
-  guardian_phone text not null,
+  guardian_phone text,
 
   photo_url text,                                   -- الصورة الشخصية (Supabase Storage public URL)
 
@@ -136,30 +138,47 @@ create index if not exists idx_students_has_social_welfare on public.students (h
 -- Static site uses the Supabase anon key directly in the browser, so
 -- every read/write requires a signed-in Supabase Auth session (see
 -- login.html + requireAuth() in js/supabase-client.js).
+--
+-- Role-aware: a user's role lives on Supabase Auth app_metadata (set via
+-- the Supabase dashboard only — see add-role-based-access-migration.sql
+-- for details). role = 'data_entry' can only INSERT; everyone else
+-- (role = 'admin' or no role set, for backward compatibility) has full
+-- access. This is enforced here, not just hidden in the UI.
 -- ---------------------------------------------------------------------
 
 alter table public.students enable row level security;
 
-create policy "Authenticated users can read students"
+create policy "Admins can read students"
   on public.students for select
   to authenticated
-  using (true);
+  using (coalesce(auth.jwt() -> 'app_metadata' ->> 'role', 'admin') = 'admin');
 
-create policy "Authenticated users can insert students"
+-- Data-entry users can't browse the roster, but they can read back a
+-- record they just created themselves, so the "save then print" flow
+-- on student.html works right after they submit add-student.html.
+create policy "Data entry users can read their own submissions"
+  on public.students for select
+  to authenticated
+  using (
+    coalesce(auth.jwt() -> 'app_metadata' ->> 'role', 'admin') = 'data_entry'
+    and created_by = auth.uid()
+  );
+
+create policy "All authenticated users can insert students"
   on public.students for insert
   to authenticated
   with check (true);
 
-create policy "Authenticated users can update students"
+create policy "Admins can update students"
   on public.students for update
   to authenticated
-  using (true)
-  with check (true);
+  using (coalesce(auth.jwt() -> 'app_metadata' ->> 'role', 'admin') = 'admin')
+  with check (coalesce(auth.jwt() -> 'app_metadata' ->> 'role', 'admin') = 'admin');
 
-create policy "Authenticated users can delete students"
+create policy "Admins can delete students"
   on public.students for delete
   to authenticated
-  using (true);
+  using (coalesce(auth.jwt() -> 'app_metadata' ->> 'role', 'admin') = 'admin');
 
 -- ---------------------------------------------------------------------
 -- Dashboard statistics view

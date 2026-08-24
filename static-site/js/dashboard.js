@@ -34,21 +34,23 @@ function renderStudents(students) {
 
   tbody.innerHTML = students
     .map((s) => {
-      const fullName = `${s.student_first_name} ${s.student_second_name} ${s.student_surname}`;
+      // Triple name: first (self) + second (father) + third (grandfather) —
+      // not the surname, per the requested display convention.
+      const fullName = `${s.student_first_name} ${s.student_second_name} ${s.student_third_name}`;
       const date = formatDateEn(s.created_at);
       return `
         <tr class="border-b border-slate-50 transition hover:bg-slate-50">
           <td class="px-5 py-3">
             <a href="student.html?id=${s.id}" class="font-semibold text-brand-700 hover:underline">${fullName}</a>
           </td>
-          <td class="px-5 py-3 text-slate-600">${s.current_grade}</td>
+          <td class="px-5 py-3 text-slate-600">${s.current_grade ?? "—"}</td>
           <td class="px-5 py-3 text-slate-600">${s.section ?? "—"}</td>
           <td class="px-5 py-3">
             <span class="rounded-full px-2.5 py-1 text-xs font-semibold ${resultBadgeClass[s.previous_year_result]}">
               ${PREVIOUS_RESULT_LABELS[s.previous_year_result]}
             </span>
           </td>
-          <td class="px-5 py-3 text-slate-600" dir="ltr">${s.guardian_phone}</td>
+          <td class="px-5 py-3 text-slate-600" dir="ltr">${s.guardian_phone ?? "—"}</td>
           <td class="px-5 py-3 text-slate-500">${date}</td>
           <td class="px-5 py-3">
             <div class="flex items-center gap-2">
@@ -264,7 +266,7 @@ async function renderAnalyticsPanel() {
 
 async function handleDeleteStudent(id) {
   const student = allStudents.find((s) => s.id === id);
-  const name = student ? `${student.student_first_name} ${student.student_surname}` : "هذا الطالب";
+  const name = student ? `${student.student_first_name} ${student.student_second_name} ${student.student_third_name}` : "هذا الطالب";
   if (!confirm(`هل أنت متأكد من حذف بيانات ${name}؟ لا يمكن التراجع عن هذا الإجراء.`)) return;
 
   try {
@@ -280,7 +282,15 @@ async function handleDeleteStudent(id) {
 }
 
 async function init() {
-  await requireAuth();
+  const session = await requireAuth();
+  if (!session) return;
+
+  // Restricted "data entry" users never see the dashboard — their whole
+  // job is submitting partial records via add-student.html.
+  if (isDataEntryUser(session)) {
+    window.location.href = "add-student.html";
+    return;
+  }
 
   async function handleLogout() {
     await signOut();

@@ -91,7 +91,7 @@ function renderStudent(s) {
   setText("f-notes", s.notes);
 
   document.getElementById("header-date").textContent = `📅 ${formatDateEn(new Date())}`;
-  document.getElementById("header-grade").textContent = `🎓 ${s.current_grade}${s.section ? " - شعبة " + s.section : ""}`;
+  document.getElementById("header-grade").textContent = `🎓 ${s.current_grade ?? "—"}${s.section ? " - شعبة " + s.section : ""}`;
   document.getElementById("header-statistical-number").textContent = s.statistical_number ? `🔢 الرقم الإحصائي: ${s.statistical_number}` : "";
 
   document.title = `${s.student_first_name} ${s.student_surname} - نظام EMIS`;
@@ -154,8 +154,24 @@ function initPhotoReplace(getStudent) {
   });
 }
 
+// ---------------------------------------------------------------------
+// Restricted "data entry" role: the standard multi-signature block is
+// replaced with a single fixed label — this role never signs off on a
+// record, that's the admin's job once they complete/review it.
+// ---------------------------------------------------------------------
+function applyDataEntrySignatureOverride() {
+  const block = document.getElementById("signature-block");
+  block.innerHTML = `
+    <div class="pt-6 text-center">
+      <p class="text-sm font-bold text-slate-800">مسؤول معلومات EMIS</p>
+    </div>
+  `;
+}
+
 async function init() {
-  await requireAuth();
+  const session = await requireAuth();
+  if (!session) return;
+  const restricted = isDataEntryUser(session);
 
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
@@ -171,18 +187,31 @@ async function init() {
   try {
     student = await fetchStudentById(id);
     renderStudent(student);
+    if (restricted) applyDataEntrySignatureOverride();
     loadingEl.classList.add("hidden");
     printArea.classList.remove("hidden");
 
-    document.getElementById("student-actions").innerHTML = `
-      <a href="add-student.html?id=${student.id}" class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-amber-500 px-4 py-2.5 text-sm font-semibold text-amber-700 shadow-sm transition hover:bg-amber-50 sm:flex-initial">
-        ✏️ تعديل بيانات الطالب
-      </a>
-      <button id="print-btn" class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 sm:flex-initial">
-        🖨 طباعة الاستمارة
-      </button>
-    `;
-    document.getElementById("print-btn").addEventListener("click", () => window.print());
+    if (restricted) {
+      document.getElementById("student-actions").innerHTML = `
+        <button id="print-btn" class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 sm:flex-initial">
+          🖨 طباعة الاستمارة
+        </button>
+      `;
+      document.getElementById("print-btn").addEventListener("click", () => window.print());
+      // Save & Print is a single uninterrupted action for this role — fire
+      // the print dialog automatically once the record is rendered.
+      setTimeout(() => window.print(), 300);
+    } else {
+      document.getElementById("student-actions").innerHTML = `
+        <a href="add-student.html?id=${student.id}" class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-amber-500 px-4 py-2.5 text-sm font-semibold text-amber-700 shadow-sm transition hover:bg-amber-50 sm:flex-initial">
+          ✏️ تعديل بيانات الطالب
+        </a>
+        <button id="print-btn" class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 sm:flex-initial">
+          🖨 طباعة الاستمارة
+        </button>
+      `;
+      document.getElementById("print-btn").addEventListener("click", () => window.print());
+    }
   } catch (err) {
     loadingEl.textContent = `تعذر تحميل بيانات الطالب: ${err.message}`;
   }

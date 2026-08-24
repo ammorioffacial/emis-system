@@ -132,6 +132,22 @@ function initIdTypeToggles() {
 }
 
 // ---------------------------------------------------------------------
+// Restricted "data entry" role: only the basic student-info and
+// mother-name sections are editable; everything else (dashboard nav
+// chrome + the other form cards) is hidden. Inputs inside hidden
+// sections are disabled so FormData/buildPayloadFromForm omits them and
+// their `required` attributes don't block reportValidity().
+// ---------------------------------------------------------------------
+function applyDataEntryRestrictions() {
+  document.querySelectorAll("[data-admin-only]").forEach((el) => {
+    el.classList.add("hidden");
+    el.querySelectorAll("input, select, textarea").forEach((field) => {
+      field.disabled = true;
+    });
+  });
+}
+
+// ---------------------------------------------------------------------
 // Edit mode: prefill every field from an existing student record.
 // ---------------------------------------------------------------------
 function prefillForm(form, s) {
@@ -176,7 +192,11 @@ function prefillForm(form, s) {
 }
 
 async function init() {
-  await requireAuth();
+  const session = await requireAuth();
+  if (!session) return;
+  const restricted = isDataEntryUser(session);
+  if (restricted) applyDataEntryRestrictions();
+
   populateSelectOptions();
   initIdTypeToggles();
   initStageGradeCascades();
@@ -193,7 +213,10 @@ async function init() {
   const submitBtn = document.getElementById("submit-btn");
 
   const params = new URLSearchParams(window.location.search);
-  const editId = params.get("id");
+  // Restricted users can only ever create new partial records — they have
+  // no SELECT access (see add-role-based-access-migration.sql), so edit
+  // mode is not reachable for them even if ?id= is present in the URL.
+  const editId = restricted ? null : params.get("id");
 
   if (editId) {
     try {

@@ -33,6 +33,20 @@ async function requireAuth() {
   return session;
 }
 
+/**
+ * Reads the user's role from Supabase Auth app_metadata (settable only via
+ * the Supabase dashboard or Admin API — never client-side, which is what
+ * makes it safe to trust for access control). No role set = "admin", for
+ * backward compatibility with users created before roles existed.
+ */
+function getUserRole(session) {
+  return session?.user?.app_metadata?.role || "admin";
+}
+
+function isDataEntryUser(session) {
+  return getUserRole(session) === "data_entry";
+}
+
 // ---------------------------------------------------------------------
 // Students data access
 // ---------------------------------------------------------------------

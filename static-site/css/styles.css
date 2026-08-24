@@ -1,0 +1,35 @@
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: "Tajawal", sans-serif;
+}
+
+* {
+  print-color-adjust: exact;
+  -webkit-print-color-adjust: exact;
+}
+
+/* ------------------------------------------------------------------ */
+/* Print rules: hide dashboard/nav chrome, keep only the printable form */
+/* ------------------------------------------------------------------ */
+@media print {
+  @page {
+    size: A4;
+    margin: 8mm;
+  }
+
+  body {
+    background: white !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  .print-area {
+    display: block !important;
+    width: 100% !important;
+  }
+}

@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>استمارة تسجيل طالب - نظام EMIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    .lbl { display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 600; color: #334155; }
+    .inp {
+      width: 100%; border-radius: 0.5rem; border: 1px solid #e2e8f0; background: #fff;
+      padding: 0.5rem 0.75rem; font-size: 0.875rem; outline: none; transition: 0.15s;
+    }
+    .inp:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+  </style>
+</head>
+<body class="font-tajawal bg-slate-50 text-slate-900 antialiased">
+  <div class="mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
+    <div class="no-print mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <a href="index.html" class="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-brand-700">→ العودة إلى لوحة التحكم</a>
+      <div class="flex flex-wrap gap-3">
+        <button type="button" onclick="clearForm()" class="rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-600 hover:bg-slate-50">
+          مسح الاستمارة
+        </button>
+        <button type="submit" form="editable-student-form" id="save-btn" class="rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-brand-700">
+          💾 حفظ في النظام
+        </button>
+      </div>
+    </div>
+
+    <h1 class="mb-6 text-2xl font-extrabold text-slate-900">استمارة تسجيل طالب</h1>
+
+    <p id="form-status" class="mb-6 hidden rounded-xl px-4 py-3 text-sm font-semibold"></p>
+
+    <form id="editable-student-form" class="space-y-6">
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">صورة الطالب</h2>
+        <div class="flex flex-col items-center gap-3 sm:flex-row">
+          <input type="file" id="photo-input" accept="image/*" class="hidden" />
+          <label for="photo-input" class="group relative flex w-28 aspect-[3/4] cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 transition hover:border-brand-400">
+            <img id="photo-preview" src="" alt="" class="hidden h-full w-full object-cover" />
+            <span id="photo-placeholder-icon" class="flex flex-col items-center gap-1 text-slate-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+              <span class="text-[11px] font-semibold">إضافة صورة</span>
+            </span>
+            <span class="absolute inset-0 hidden items-center justify-center bg-black/40 text-white group-hover:flex">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            </span>
+          </label>
+          <input type="hidden" name="photo_url" id="photo_url_hidden" />
+          <p id="photo-upload-status" class="text-xs text-slate-400"></p>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">بيانات الطالب الأساسية</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div><label class="lbl">الاسم الأول</label><input required class="inp" name="student_first_name" /></div>
+          <div><label class="lbl">الاسم الثاني</label><input required class="inp" name="student_second_name" /></div>
+          <div><label class="lbl">الاسم الثالث</label><input required class="inp" name="student_third_name" /></div>
+          <div><label class="lbl">الاسم الرابع</label><input class="inp" name="student_fourth_name" /></div>
+          <div><label class="lbl">اللقب</label><input required class="inp" name="student_surname" /></div>
+          <div><label class="lbl">تاريخ الميلاد</label><input required type="date" class="inp" name="date_of_birth" /></div>
+          <div>
+            <label class="lbl">فئة الدم</label>
+            <select class="inp" name="blood_type" id="blood_type"><option value="">—</option></select>
+          </div>
+          <div><label class="lbl">مسقط الرأس</label><input class="inp" name="birthplace" /></div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">اسم الأم</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div><label class="lbl">الاسم الأول</label><input required class="inp" name="mother_first_name" /></div>
+          <div><label class="lbl">الاسم الثاني</label><input required class="inp" name="mother_second_name" /></div>
+          <div><label class="lbl">الاسم الثالث</label><input required class="inp" name="mother_third_name" /></div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">هوية الطالب</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <label class="lbl">نوع الهوية</label>
+            <select class="inp id-type-select" data-group="student" name="student_id_type">
+              <option value="national_id">بطاقة وطنية</option>
+              <option value="nationality">جنسية</option>
+            </select>
+          </div>
+          <div class="id-field" data-group="student" data-show-when="national_id">
+            <label class="lbl">رقم البطاقة الوطنية</label><input class="inp" name="student_national_id_number" />
+          </div>
+          <div class="id-field" data-group="student" data-show-when="nationality">
+            <label class="lbl">رقم هوية الأحوال المدنية</label><input class="inp" name="student_civil_status_id_number" />
+          </div>
+          <div class="id-field" data-group="student" data-show-when="nationality">
+            <label class="lbl">رقم شهادة الجنسية</label><input class="inp" name="student_nationality_cert_number" />
+          </div>
+          <div class="id-field" data-group="student" data-show-when="nationality">
+            <label class="lbl">رقم السجل</label><input class="inp" name="student_record_number" />
+          </div>
+          <div class="id-field" data-group="student" data-show-when="nationality">
+            <label class="lbl">رقم الصحيفة</label><input class="inp" name="student_page_number" />
+          </div>
+          <div class="id-field" data-group="student" data-show-when="nationality">
+            <label class="lbl">جهة الإصدار</label><input class="inp" name="student_issuing_authority" />
+          </div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">هوية الأب</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <label class="lbl">نوع الهوية</label>
+            <select class="inp id-type-select" data-group="father" name="father_id_type">
+              <option value="national_id">بطاقة وطنية</option>
+              <option value="nationality">جنسية</option>
+            </select>
+          </div>
+          <div class="id-field" data-group="father" data-show-when="national_id">
+            <label class="lbl">رقم البطاقة الوطنية</label><input class="inp" name="father_national_id_number" />
+          </div>
+          <div class="id-field" data-group="father" data-show-when="nationality">
+            <label class="lbl">رقم هوية الأحوال</label><input class="inp" name="father_civil_status_id_number" />
+          </div>
+          <div class="id-field" data-group="father" data-show-when="nationality">
+            <label class="lbl">رقم شهادة الجنسية</label><input class="inp" name="father_nationality_cert_number" />
+          </div>
+          <div class="id-field" data-group="father" data-show-when="nationality">
+            <label class="lbl">رقم السجل</label><input class="inp" name="father_record_number" />
+          </div>
+          <div class="id-field" data-group="father" data-show-when="nationality">
+            <label class="lbl">رقم الصحيفة</label><input class="inp" name="father_page_number" />
+          </div>
+          <div class="id-field" data-group="father" data-show-when="nationality">
+            <label class="lbl">جهة الإصدار</label><input class="inp" name="father_issuing_authority" />
+          </div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">الحالة الاجتماعية والاقتصادية</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <label class="lbl">ذوي الاحتياجات الخاصة</label>
+            <select class="inp" name="has_special_needs">
+              <option value="no">كلا</option>
+              <option value="yes">نعم</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl">المستوى الاقتصادي</label>
+            <select class="inp" name="economic_level">
+              <option value="below_poverty">تحت خط الفقر</option>
+              <option value="poor">فقيرة</option>
+              <option value="middle" selected>وسطى</option>
+              <option value="high">عليا</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl">مشمول بالرعاية الاجتماعية</label>
+            <select class="inp" name="has_social_welfare">
+              <option value="no">كلا</option>
+              <option value="yes">نعم</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">البيانات الدراسية</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <label class="lbl">العام الدراسي السابق</label>
+            <select class="inp" name="previous_academic_year">
+              <option value="">—</option>
+              <option value="2025-2026">2025-2026</option>
+              <option value="2024-2025">2024-2025</option>
+              <option value="2023-2024">2023-2024</option>
+              <option value="2022-2023">2022-2023</option>
+              <option value="2021-2022">2021-2022</option>
+              <option value="تسجيل جديد">تسجيل جديد</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl">نتيجة العام السابق</label>
+            <select class="inp" name="previous_year_result">
+              <option value="new_registration">تسجيل جديد</option>
+              <option value="passed">ناجح</option>
+              <option value="failed">راسب</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl">الصف الدراسي الحالي</label>
+            <select required class="inp" name="current_grade" id="current_grade"></select>
+          </div>
+          <div><label class="lbl">الشعبة</label><input class="inp" name="section" /></div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">بيانات العنوان والتواصل</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div><label class="lbl">الحي</label><input class="inp" name="neighborhood" /></div>
+          <div><label class="lbl">المحلة</label><input class="inp" name="mahalla" /></div>
+          <div><label class="lbl">الزقاق</label><input class="inp" name="alley" /></div>
+          <div><label class="lbl">اقرب نقطة دالة</label><input class="inp" name="nearest_landmark" /></div>
+          <div><label class="lbl">رقم هاتف ولي الأمر</label><input required dir="ltr" class="inp" name="guardian_phone" /></div>
+        </div>
+      </section>
+    </form>
+
+    <footer class="no-print mt-8 pb-2 text-center text-xs text-slate-400">
+      حقوق برمجة النظام محفوظة الاستاذ علي محمد علي ❤️
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/photo-upload.js"></script>
+  <script>
+    // ---------------------------------------------------------------
+    // Populate select options (blood type, grade) — same source lists
+    // used across the rest of the app (js/constants.js).
+    // ---------------------------------------------------------------
+    function populateSelectOptions() {
+      const bloodSelect = document.getElementById("blood_type");
+      BLOOD_TYPES.forEach((b) => {
+        const opt = document.createElement("option");
+        opt.value = b;
+        opt.textContent = b;
+        bloodSelect.appendChild(opt);
+      });
+
+      const gradeSelect = document.getElementById("current_grade");
+      GRADES.forEach((g) => {
+        const opt = document.createElement("option");
+        opt.value = g;
+        opt.textContent = g;
+        gradeSelect.appendChild(opt);
+      });
+    }
+
+    // ---------------------------------------------------------------
+    // Conditional ID fields (same logic as add-student.html): only the
+    // fields relevant to the selected id type are shown; hidden fields
+    // are cleared and disabled so stale values are never submitted.
+    // ---------------------------------------------------------------
+    function applyIdTypeVisibility(group) {
+      const select = document.querySelector(`.id-type-select[data-group="${group}"]`);
+      const selected = select.value;
+
+      document.querySelectorAll(`.id-field[data-group="${group}"]`).forEach((field) => {
+        const shouldShow = field.dataset.showWhen === selected;
+        const input = field.querySelector("input");
+
+        field.classList.toggle("hidden", !shouldShow);
+        if (input) {
+          input.disabled = !shouldShow;
+          if (!shouldShow) input.value = "";
+        }
+      });
+    }
+
+    function initIdTypeToggles() {
+      document.querySelectorAll(".id-type-select").forEach((select) => {
+        applyIdTypeVisibility(select.dataset.group);
+        select.addEventListener("change", () => applyIdTypeVisibility(select.dataset.group));
+      });
+    }
+
+    // ---------------------------------------------------------------
+    // Build a students-table-shaped payload from the live form state.
+    // ---------------------------------------------------------------
+    function buildPayloadFromForm(form) {
+      const fd = new FormData(form);
+      const payload = Object.fromEntries(fd.entries());
+
+      const optionalFields = [
+        "student_fourth_name", "student_national_id_number", "student_civil_status_id_number",
+        "student_nationality_cert_number", "student_record_number", "student_page_number",
+        "student_issuing_authority", "father_national_id_number", "father_civil_status_id_number",
+        "father_nationality_cert_number", "father_record_number", "father_page_number",
+        "father_issuing_authority", "birthplace", "blood_type", "previous_academic_year",
+        "section", "neighborhood", "mahalla", "alley", "nearest_landmark", "photo_url",
+      ];
+      optionalFields.forEach((field) => {
+        if (payload[field] === "") payload[field] = null;
+      });
+
+      return payload;
+    }
+
+    function showStatus(message, type) {
+      const el = document.getElementById("form-status");
+      el.textContent = message;
+      el.className =
+        "mb-6 rounded-xl px-4 py-3 text-sm font-semibold " +
+        (type === "error"
+          ? "border border-rose-200 bg-rose-50 text-rose-700"
+          : "border border-emerald-200 bg-emerald-50 text-emerald-700");
+    }
+
+    function clearForm() {
+      if (!confirm("هل تريد مسح جميع الحقول؟")) return;
+      document.getElementById("editable-student-form").reset();
+      document.querySelectorAll(".id-type-select").forEach((s) => applyIdTypeVisibility(s.dataset.group));
+    }
+
+    async function init() {
+      await requireAuth();
+      populateSelectOptions();
+      initIdTypeToggles();
+      initPhotoUpload();
+
+      const form = document.getElementById("editable-student-form");
+
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!form.reportValidity()) return;
+
+        const btn = document.getElementById("save-btn");
+        btn.disabled = true;
+        btn.textContent = "جارٍ الحفظ...";
+        try {
+          const payload = buildPayloadFromForm(form);
+          const inserted = await insertStudent(payload);
+          showStatus("تم حفظ بيانات الطالب بنجاح في النظام.", "success");
+          setTimeout(() => {
+            window.location.href = `student.html?id=${inserted.id}`;
+          }, 900);
+        } catch (err) {
+          showStatus("تعذر حفظ بيانات الطالب: " + err.message, "error");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "💾 حفظ في النظام";
+        }
+      });
+    }
+
+    init();
+  </script>
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>إضافة طالب جديد - نظام EMIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="font-tajawal bg-slate-50 text-slate-900 antialiased">
+  <!-- Mobile topbar (hidden on lg+, where the sidebar takes over) -->
+  <header class="no-print flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 lg:hidden">
+    <div class="flex items-center gap-2">
+      <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">E</div>
+      <p class="text-sm font-bold">نظام EMIS</p>
+    </div>
+    <button id="mobile-menu-btn" class="rounded-lg border border-slate-200 p-2 text-slate-600" aria-label="القائمة">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+    </button>
+  </header>
+
+  <!-- Mobile nav drawer -->
+  <div id="mobile-drawer" class="no-print fixed inset-0 z-50 hidden lg:hidden">
+    <div id="mobile-drawer-backdrop" class="absolute inset-0 bg-slate-900/50"></div>
+    <div class="absolute inset-y-0 right-0 flex w-72 max-w-[85%] flex-col bg-white shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <p class="text-sm font-bold">نظام EMIS</p>
+        <button id="mobile-drawer-close" class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100" aria-label="إغلاق">✕</button>
+      </div>
+      <nav class="flex flex-1 flex-col gap-1 px-3 py-4">
+        <a href="index.html" class="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-700">لوحة التحكم</a>
+        <a href="add-student.html" class="rounded-lg bg-brand-50 px-3 py-2.5 text-sm font-medium text-brand-700">إضافة طالب جديد</a>
+      </nav>
+    </div>
+  </div>
+
+  <div class="flex min-h-screen">
+    <aside class="no-print hidden w-64 shrink-0 border-l border-slate-200 bg-white lg:flex lg:flex-col">
+      <div class="flex items-center gap-3 border-b border-slate-100 px-6 py-5">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-white text-xl font-bold">E</div>
+        <div>
+          <p class="text-sm font-bold leading-tight">نظام EMIS</p>
+          <p class="text-xs text-slate-500">إدارة الطلاب</p>
+        </div>
+      </div>
+      <nav class="flex flex-1 flex-col gap-1 px-3 py-4">
+        <a href="index.html" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-brand-50 hover:text-brand-700">لوحة التحكم</a>
+        <a href="add-student.html" class="flex items-center gap-3 rounded-lg bg-brand-50 px-3 py-2.5 text-sm font-medium text-brand-700">إضافة طالب جديد</a>
+      </nav>
+    </aside>
+
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+      <div class="mx-auto max-w-5xl">
+        <a href="index.html" class="mb-4 flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-brand-700">→ العودة إلى لوحة التحكم</a>
+        <div class="mb-6 flex items-center justify-between">
+          <h1 id="page-title" class="text-2xl font-extrabold text-slate-900">إضافة طالب جديد</h1>
+          <p id="statistical-number-badge" class="hidden rounded-full bg-slate-100 px-3 py-1 text-xs font-bold text-slate-500"></p>
+        </div>
+
+        <form id="student-form" class="space-y-8">
+          <p id="form-error" class="hidden rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"></p>
+
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+            <h2 class="mb-4 text-base font-bold text-slate-900">صورة الطالب</h2>
+            <div class="flex flex-col items-center gap-3 sm:flex-row">
+              <input type="file" id="photo-input" accept="image/*" class="hidden" />
+              <label for="photo-input" class="group relative flex w-28 aspect-[3/4] cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 transition hover:border-brand-400">
+                <img id="photo-preview" src="" alt="" class="hidden h-full w-full object-cover" />
+                <span id="photo-placeholder-icon" class="flex flex-col items-center gap-1 text-slate-400">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                  <span class="text-[11px] font-semibold">إضافة صورة</span>
+                </span>
+                <span class="absolute inset-0 hidden items-center justify-center bg-black/40 text-white group-hover:flex">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                </span>
+              </label>
+              <input type="hidden" name="photo_url" id="photo_url_hidden" />
+              <p id="photo-upload-status" class="text-xs text-slate-400"></p>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+            <h2 class="mb-4 text-base font-bold text-slate-900">بيانات الطالب الأساسية</h2>
+            <p class="mb-2 text-xs font-bold text-slate-400">الاسم الثلاثي</p>
+            <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div><label class="lbl">الاسم الأول</label><input required maxlength="15" class="inp" name="student_first_name" /></div>
+              <div><label class="lbl">الاسم الثاني</label><input required maxlength="15" class="inp" name="student_second_name" /></div>
+              <div><label class="lbl">الاسم الثالث</label><input required maxlength="15" class="inp" name="student_third_name" /></div>
+            </div>
+            <p class="mb-2 text-xs font-bold text-slate-400">اللقب</p>
+            <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div><label class="lbl">الاسم الرابع</label><input required maxlength="15" class="inp" name="student_fourth_name" /></div>
+              <div><label class="lbl">اللقب</label><input required maxlength="15" class="inp" name="student_surname" /></div>
+            </div>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div><label class="lbl">تاريخ الميلاد</label><input required type="date" class="inp" name="date_of_birth" /></div>
+              <div>
+                <label class="lbl">فئة الدم</label>
+                <select class="inp" name="blood_type" id="blood_type"><option value="">—</option></select>
+              </div>
+              <div><label class="lbl">مسقط الرأس</label><input class="inp" name="birthplace" /></div>
+              <div>
+                <label class="lbl">الحالة الزوجية</label>
+                <select class="inp" name="marital_status">
+                  <option value="">—</option>
+                  <option value="أعزب">أعزب</option>
+                  <option value="متزوج">متزوج</option>
+                  <option value="مطلق">مطلق</option>
+                  <option value="أرمل">أرمل</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+            <h2 class="mb-4 text-base font-bold text-slate-900">اسم الأم</h2>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+              <div><label class="lbl">الاسم الأول</label><input required maxlength="15" class="inp" name="mother_first_name" /></div>
+              <div><label class="lbl">الاسم الثاني</label><input required maxlength="15" class="inp" name="mother_second_name" /></div>
+              <div><label class="lbl">الاسم الثالث</label><input required maxlength="15" class="inp" name="mother_third_name" /></div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+            <h2 class="mb-4 text-base font-bold text-slate-900">هوية الطالب</h2>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <label class="lbl">نوع الهوية</label>
+                <select class="inp id-type-select" data-group="student" name="student_id_type">
+                  <option value="national_id">بطاقة وطنية</option>
+                  <option value="nationality">جنسية</option>
+                </select>
+              </div>
+              <div class="id-field" data-group="student" data-show-when="national_id">
+                <label class="lbl">رقم البطاقة الوطنية</label><input class="inp" name="student_national_id_number" inputmode="numeric" pattern="^[0-9]{12}$" title="12 رقماً بالضبط" maxlength="12" />
+              </div>
+              <div class="id-field" data-group="student" data-show-when="nationality">
+                <label class="lbl">رقم هوية الأحوال المدنية</label><input class="inp" name="student_civil_status_id_number" maxlength="5" />
+              </div>
+              <div class="id-field" data-group="student" data-show-when="nationality">
+                <label class="lbl">رقم شهادة الجنسية</label><input class="inp" name="student_nationality_cert_number" maxlength="5" />
+              </div>
+              <div class="id-field" data-group="student" data-show-when="nationality">
+                <label class="lbl">رقم السجل</label><input class="inp" name="student_record_number" maxlength="5" />
+              </div>
+              <div class="id-field" data-group="student" data-show-when="nationality">
+                <label class="lbl">رقم الصحيفة</label><input class="inp" name="student_page_number" maxlength="5" />
+              </div>
+              <div class="id-field" data-group="student" data-show-when="nationality">
+                <label class="lbl">جهة الإصدار</label><input class="inp" name="student_issuing_authority" />
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+            <h2 class="mb-4 text-base font-bold text-slate-900">هوية الأب</h2>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <label class="lbl">نوع الهوية</label>
+                <select class="inp id-type-select" data-group="father" name="father_id_type">
+                  <option value="national_id">بطاقة وطنية</option>
+                  <option value="nationality">جنسية</option>
+                </select>
+              </div>
+              <div class="id-field" data-group="father" data-show-when="national_id">
+                <label class="lbl">رقم البطاقة الوطنية</label><input class="inp" name="father_national_id_number" inputmode="numeric" pattern="^[0-9]{12}$" title="12 رقماً بالضبط" maxlength="12" />
+              </div>
+              <div class="id-field" data-group="father" data-show-when="nationality">
+                <label class="lbl">رقم هوية الأحوال</label><input class="inp" name="father_civil_status_id_number" maxlength="5" />
+              </div>
+              <div class="id-field" data-group="father" data-show-when="nationality">
+                <label class="lbl">رقم شهادة الجنسية</label><input class="inp" name="father_nationality_cert_number" maxlength="5" />
+              </div>
+              <div class="id-field" data-group="father" data-show-when="nationality">
+                <label class="lbl">رقم السجل</label><input class="inp" name="father_record_number" maxlength="5" />
+              </div>
+              <div class="id-field" data-group="father" data-show-when="nationality">
+                <label class="lbl">رقم الصحيفة</label><input class="inp" name="father_page_number" maxlength="5" />
+              </div>
+              <div class="id-field" data-group="father" data-show-when="nationality">
+                <label class="lbl">جهة الإصدار</label><input class="inp" name="father_issuing_authority" />
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+            <h2 class="mb-4 text-base font-bold text-slate-900">الحالة الاجتماعية والاقتصادية</h2>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <label class="lbl">ذوي الاحتياجات الخاصة</label>
+                <select class="inp" id="has_special_needs" name="has_special_needs">
+                  <option value="no">كلا</option>
+                  <option value="yes">نعم</option>
+                </select>
+              </div>
+              <div id="special-needs-type-field" class="hidden">
+                <label class="lbl">نوع الإعاقة</label>
+                <select class="inp" name="special_needs_type">
+                  <option value="physical">العوق الفيزيائي</option>
+                  <option value="visual">العوق البصري</option>
+                  <option value="hearing">العوق السمعي</option>
+                  <option value="intellectual">العوق الذهني</option>
+                  <option value="psychological">العوق النفسي</option>
+                  <option value="autism">التوحد</option>
+                  <option value="slow_learner">بطيء التعلم</option>
+                </select>
+              </div>
+              <div>
+                <label class="lbl">المستوى الاقتصادي</label>
+                <select class="inp" name="economic_level">
+                  <option value="below_poverty">تحت خط الفقر</option>
+                  <option value="poor">فقيرة</option>
+                  <option value="middle" selected>وسطى</option>
+                  <option value="high">عليا</option>
+                </select>
+              </div>
+              <div>
+                <label class="lbl">مشمول بالرعاية الاجتماعية</label>
+                <select class="inp" name="has_social_welfare">
+                  <option value="no">كلا</option>
+                  <option value="yes">نعم</option>
+                </select>
+              </div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+            <h2 class="mb-4 text-base font-bold text-slate-900">البيانات الدراسية</h2>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div><label class="lbl">المدرسة السابقة</label><input class="inp" name="previous_school" /></div>
+              <div>
+                <label class="lbl">العام الدراسي السابق</label>
+                <select class="inp" name="previous_academic_year">
+                  <option value="">—</option>
+                  <option value="2025-2026">2025-2026</option>
+                  <option value="2024-2025">2024-2025</option>
+                  <option value="2023-2024">2023-2024</option>
+                  <option value="2022-2023">2022-2023</option>
+                  <option value="2021-2022">2021-2022</option>
+                  <option value="تسجيل جديد">تسجيل جديد</option>
+                </select>
+              </div>
+              <div>
+                <label class="lbl">نتيجة العام السابق</label>
+                <select class="inp" name="previous_year_result">
+                  <option value="passed">ناجح</option>
+                  <option value="failed">راسب</option>
+                </select>
+              </div>
+
+              <div>
+                <label class="lbl">المرحلة الدراسية السابقة</label>
+                <select class="inp stage-select" data-target="previous_stage_grade" name="previous_educational_stage">
+                  <option value="">—</option>
+                  <option value="primary">ابتدائية</option>
+                  <option value="intermediate">متوسطة</option>
+                  <option value="preparatory">اعدادية</option>
+                </select>
+              </div>
+              <div>
+                <label class="lbl">الصف السابق</label>
+                <select class="inp" name="previous_grade" id="previous_stage_grade"><option value="">—</option></select>
+              </div>
+              <div></div>
+
+              <div>
+                <label class="lbl">المرحلة الدراسية الحالية</label>
+                <select required class="inp stage-select" data-target="current_stage_grade" name="current_educational_stage">
+                  <option value="primary">ابتدائية</option>
+                  <option value="intermediate">متوسطة</option>
+                  <option value="preparatory">اعدادية</option>
+                </select>
+              </div>
+              <div>
+                <label class="lbl">الصف الدراسي الحالي</label>
+                <select required class="inp" name="current_grade" id="current_stage_grade"></select>
+              </div>
+              <div id="preparatory-branch-field" class="hidden">
+                <label class="lbl">الفرع (اعدادية)</label>
+                <select class="inp" name="current_preparatory_branch">
+                  <option value="scientific">علمي</option>
+                  <option value="literary">ادبي</option>
+                </select>
+              </div>
+
+              <div><label class="lbl">الشعبة</label><input class="inp" name="section" /></div>
+            </div>
+          </section>
+
+          <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+            <h2 class="mb-4 text-base font-bold text-slate-900">بيانات العنوان والتواصل</h2>
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div><label class="lbl">المحافظة</label><input class="inp" name="governorate" value="المثنى" /></div>
+              <div><label class="lbl">القضاء</label><input class="inp" name="district" value="الهلال" /></div>
+              <div><label class="lbl">الناحية</label><input class="inp" name="sub_district" /></div>
+              <div><label class="lbl">الحي</label><input class="inp" name="neighborhood" /></div>
+              <div><label class="lbl">المحلة</label><input class="inp" name="mahalla" /></div>
+              <div><label class="lbl">الزقاق</label><input class="inp" name="alley" maxlength="5" /></div>
+              <div><label class="lbl">اقرب نقطة دالة</label><input class="inp" name="nearest_landmark" /></div>
+              <div>
+                <label class="lbl">رقم هاتف ولي الأمر</label>
+                <input required dir="ltr" class="inp" name="guardian_phone" inputmode="numeric" pattern="^07[0-9]{9}$" title="11 رقماً يبدأ بـ 07" maxlength="11" />
+              </div>
+              <div class="md:col-span-2 lg:col-span-3">
+                <label class="lbl">ملاحظات</label>
+                <textarea class="inp" name="notes" rows="3"></textarea>
+              </div>
+            </div>
+          </section>
+
+          <div class="flex justify-end gap-3">
+            <button type="submit" id="submit-btn" class="w-full rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 disabled:opacity-50 sm:w-auto">
+              حفظ بيانات الطالب
+            </button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <style>
+    .lbl { display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 600; color: #334155; }
+    .inp { width: 100%; border-radius: 0.5rem; border: 1px solid #e2e8f0; background: #fff; padding: 0.5rem 0.75rem; font-size: 0.875rem; outline: none; transition: 0.15s; }
+    .inp:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/photo-upload.js"></script>
+  <script src="js/student-form.js"></script>
+  <script src="js/mobile-nav.js"></script>
+</body>
+</html>

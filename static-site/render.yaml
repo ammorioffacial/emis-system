@@ -1,0 +1,9 @@
+# Render.com static site config — deploy via "New Static Site" and
+# point it at this repo, or use this blueprint with `render blueprint`.
+services:
+  - type: web
+    name: emis-static-site
+    runtime: static
+    staticPublishPath: .
+    buildCommand: ""
+    pullRequestPreviewsEnabled: false

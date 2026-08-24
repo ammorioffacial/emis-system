@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>بيانات الطالب - نظام EMIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* Each label+value pair is its own flex-col unit so the value always
+       sits tight and directly under its label — never floats away from it,
+       on screen or in print. */
+    .field-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+      text-align: right;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .field-label { font-size: 0.75rem; font-weight: 500; color: #6b7280; }
+    .field-value { font-size: 0.875rem; font-weight: 700; color: #111827; min-height: 1.25rem; word-break: break-word; }
+
+    /* Student profile photo frame */
+    .photo-frame {
+      position: relative;
+      width: 85px;
+      height: 85px;
+      border-radius: 0.75rem;
+      border: 2px solid #e5e7eb;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #f8fafc;
+    }
+
+    /* Bold, mechanical/plate-style numerals for the statistical number */
+    .statistical-number {
+      font-family: 'Courier New', 'Courier Prime', ui-monospace, monospace;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+    .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-frame .photo-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(15, 23, 42, 0.55);
+      opacity: 0; transition: opacity 0.15s ease;
+      cursor: pointer;
+    }
+    .photo-frame:hover .photo-overlay { opacity: 1; }
+
+    /* Lightbox */
+    #lightbox-backdrop {
+      position: fixed; inset: 0; z-index: 60;
+      background: rgba(15, 23, 42, 0.85);
+      display: none;
+      align-items: center; justify-content: center;
+      padding: 1.5rem;
+      animation: lightbox-fade 0.18s ease;
+    }
+    @keyframes lightbox-fade { from { opacity: 0; } to { opacity: 1; } }
+
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 5mm;
+      }
+      html, body {
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+        font-size: 11.5px !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .no-print { display: none !important; }
+
+      /* Capped (not min) height, so content can't push past one page —
+         paired with overflow:hidden above. NOTE: this means if content
+         still slightly exceeds 275mm, the excess is silently clipped
+         (most likely the signature block) rather than flowing to page 2.
+         Visually verify the signature line is intact, not just "1 page". */
+      .print-container {
+        max-height: 275mm;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-left: 0;
+        padding-right: 0;
+        page-break-after: avoid;
+      }
+      /* Cancel Tailwind's space-y-4 margins so only each card's own
+         margin-bottom (set below) controls spacing between cards. */
+      .print-container > * + * { margin-top: 0 !important; }
+
+      .print-card {
+        padding: 16px 20px !important;
+        margin-bottom: 12px !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 6px !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      /* Student ID + Father ID side-by-side to save vertical space */
+      .print-id-row {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+      }
+      .print-id-row .print-card { margin-bottom: 0 !important; }
+      /* Half-width cards need fewer columns so long ID numbers don't wrap */
+      .print-id-row .field-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+      }
+
+      /* Field grids: 4 columns on full-width cards to minimize height */
+      .field-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 10px 14px !important;
+      }
+      .field-unit { gap: 4px !important; page-break-inside: avoid; break-inside: avoid; }
+      .field-label { font-size: 11px !important; margin-bottom: 4px; opacity: 0.8; }
+      .field-value { font-size: 13px !important; font-weight: 700 !important; min-height: 0 !important; line-height: 1.3 !important; }
+      /* Numeric/ID fields only (marked dir="ltr" in the HTML) — long text
+         fields like addresses/notes still wrap normally. */
+      .field-value[dir="ltr"] { white-space: nowrap; }
+
+      h1 { font-size: 18px !important; }
+      h2, h3, h4 { font-size: 15px !important; font-weight: bold !important; margin-bottom: 12px !important; }
+
+      .photo-frame { width: 85px !important; height: 85px !important; }
+      .photo-frame .photo-overlay { display: none !important; }
+
+      /* Signature footer — fixed margin (not auto) so it can't force a
+         page break; page-break-before:avoid keeps it glued to whatever
+         precedes it rather than starting fresh on a new page. */
+      .print-signatures {
+        margin-top: 15px !important;
+        margin-bottom: 0 !important;
+        padding-top: 10px !important;
+        page-break-before: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-signatures > div { padding-top: 4px !important; gap: 12px !important; }
+      .print-signatures .border-t { margin-top: 10px !important; }
+    }
+  </style>
+</head>
+<body class="font-tajawal bg-slate-100 text-slate-900 antialiased">
+  <div class="min-h-screen py-8">
+    <div class="no-print mx-auto mb-6 flex max-w-4xl flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between">
+      <a href="index.html" class="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-brand-700">→ العودة إلى لوحة التحكم</a>
+      <div id="student-actions" class="flex flex-wrap items-center gap-3"></div>
+    </div>
+
+    <div id="loading-state" class="mx-auto max-w-4xl px-4 text-center text-slate-400">جارٍ التحميل...</div>
+
+    <!-- ================= STUDENT VIEW (populated by js/student-print.js) ================= -->
+    <div id="print-area" class="print-area print-container mx-auto hidden max-w-4xl space-y-4 px-4">
+      <div class="print-card flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center">
+        <div class="photo-frame">
+          <img id="student-photo" src="" alt="" class="hidden cursor-zoom-in" />
+          <div id="student-photo-placeholder" class="flex h-full w-full items-center justify-center text-3xl text-slate-300">
+            👤
+          </div>
+          <input type="file" id="photo-replace-input" accept="image/*" class="hidden" />
+          <label for="photo-replace-input" class="photo-overlay no-print" title="تغيير الصورة">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+          </label>
+        </div>
+        <div class="text-center sm:text-right">
+          <h1 id="student-full-name" class="text-xl font-extrabold text-slate-900"></h1>
+          <p class="mt-1 text-sm text-slate-500">استمارة إضافة التلاميذ لنظام EMIS</p>
+          <p id="photo-upload-status" class="no-print mt-1 text-xs text-slate-400"></p>
+        </div>
+        <div class="mt-2 flex flex-wrap justify-center gap-2 text-xs font-semibold text-slate-500 sm:mr-auto sm:mt-0 sm:justify-end">
+          <span id="header-date" class="rounded-full bg-slate-100 px-3 py-1"></span>
+          <span id="header-grade" class="rounded-full bg-slate-100 px-3 py-1"></span>
+          <span id="header-statistical-number" class="statistical-number rounded-full bg-slate-800 px-3 py-1 text-white"></span>
+        </div>
+      </div>
+
+      <div class="print-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-base font-bold text-slate-900">بيانات الطالب الأساسية</h2>
+        <div class="field-grid grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div class="field-unit"><p class="field-label">تاريخ الميلاد</p><p class="field-value" id="f-dob"></p></div>
+          <div class="field-unit"><p class="field-label">فئة الدم</p><p class="field-value" id="f-blood-type"></p></div>
+          <div class="field-unit"><p class="field-label">مسقط الرأس</p><p class="field-value" id="f-birthplace"></p></div>
+          <div class="field-unit"><p class="field-label">الحالة الزوجية</p><p class="field-value" id="f-marital-status"></p></div>
+          <div class="field-unit"><p class="field-label">ذوي الاحتياجات الخاصة</p><p class="field-value" id="f-special-needs"></p></div>
+          <div class="field-unit"><p class="field-label">نوع الإعاقة</p><p class="field-value" id="f-special-needs-type"></p></div>
+          <div class="field-unit"><p class="field-label">اسم الأم الثلاثي</p><p class="field-value" id="f-mother-full-name"></p></div>
+        </div>
+      </div>
+
+      <div class="print-id-row">
+      <div class="print-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-base font-bold text-slate-900">هوية الطالب</h2>
+        <div class="field-grid grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-3">
+          <div class="field-unit"><p class="field-label">نوع الهوية</p><p class="field-value" id="f-student-id-type"></p></div>
+          <div class="field-unit"><p class="field-label">رقم البطاقة الوطنية</p><p class="field-value" dir="ltr" id="f-student-national-id"></p></div>
+          <div class="field-unit"><p class="field-label">رقم هوية الأحوال المدنية</p><p class="field-value" dir="ltr" id="f-student-civil-id"></p></div>
+          <div class="field-unit"><p class="field-label">رقم شهادة الجنسية</p><p class="field-value" dir="ltr" id="f-student-nat-cert"></p></div>
+          <div class="field-unit"><p class="field-label">رقم السجل</p><p class="field-value" dir="ltr" id="f-student-record"></p></div>
+          <div class="field-unit"><p class="field-label">رقم الصحيفة</p><p class="field-value" dir="ltr" id="f-student-page"></p></div>
+          <div class="field-unit"><p class="field-label">جهة الإصدار</p><p class="field-value" id="f-student-authority"></p></div>
+        </div>
+      </div>
+
+      <div class="print-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-base font-bold text-slate-900">هوية الأب</h2>
+        <div class="field-grid grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-3">
+          <div class="field-unit"><p class="field-label">نوع الهوية</p><p class="field-value" id="f-father-id-type"></p></div>
+          <div class="field-unit"><p class="field-label">رقم البطاقة الوطنية</p><p class="field-value" dir="ltr" id="f-father-national-id"></p></div>
+          <div class="field-unit"><p class="field-label">رقم هوية الأحوال</p><p class="field-value" dir="ltr" id="f-father-civil-id"></p></div>
+          <div class="field-unit"><p class="field-label">رقم شهادة الجنسية</p><p class="field-value" dir="ltr" id="f-father-nat-cert"></p></div>
+          <div class="field-unit"><p class="field-label">رقم السجل</p><p class="field-value" dir="ltr" id="f-father-record"></p></div>
+          <div class="field-unit"><p class="field-label">رقم الصحيفة</p><p class="field-value" dir="ltr" id="f-father-page"></p></div>
+          <div class="field-unit"><p class="field-label">جهة الإصدار</p><p class="field-value" id="f-father-authority"></p></div>
+        </div>
+      </div>
+      </div>
+
+      <div class="print-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-base font-bold text-slate-900">البيانات الدراسية والحالة الاجتماعية</h2>
+        <div class="field-grid grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div class="field-unit"><p class="field-label">المدرسة السابقة</p><p class="field-value" id="f-previous-school"></p></div>
+          <div class="field-unit"><p class="field-label">العام الدراسي السابق</p><p class="field-value" id="f-prev-year"></p></div>
+          <div class="field-unit"><p class="field-label">نتيجة العام السابق</p><p class="field-value" id="f-prev-result"></p></div>
+          <div class="field-unit"><p class="field-label">المرحلة والصف السابق</p><p class="field-value" id="f-previous-stage-grade"></p></div>
+          <div class="field-unit"><p class="field-label">المرحلة والصف الحالي</p><p class="field-value" id="f-current-stage-grade"></p></div>
+          <div class="field-unit"><p class="field-label">الفرع</p><p class="field-value" id="f-preparatory-branch"></p></div>
+          <div class="field-unit"><p class="field-label">الشعبة</p><p class="field-value" id="f-section"></p></div>
+          <div class="field-unit"><p class="field-label">المستوى الاقتصادي</p><p class="field-value" id="f-economic-level"></p></div>
+          <div class="field-unit"><p class="field-label">مشمول بالرعاية الاجتماعية</p><p class="field-value" id="f-social-welfare"></p></div>
+        </div>
+      </div>
+
+      <div class="print-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-base font-bold text-slate-900">بيانات العنوان والتواصل</h2>
+        <div class="field-grid grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div class="field-unit"><p class="field-label">المحافظة</p><p class="field-value" id="f-governorate"></p></div>
+          <div class="field-unit"><p class="field-label">القضاء</p><p class="field-value" id="f-district"></p></div>
+          <div class="field-unit"><p class="field-label">الناحية</p><p class="field-value" id="f-sub-district"></p></div>
+          <div class="field-unit"><p class="field-label">الحي</p><p class="field-value" id="f-neighborhood"></p></div>
+          <div class="field-unit"><p class="field-label">المحلة</p><p class="field-value" id="f-mahalla"></p></div>
+          <div class="field-unit"><p class="field-label">الزقاق</p><p class="field-value" id="f-alley"></p></div>
+          <div class="field-unit"><p class="field-label">اقرب نقطة دالة</p><p class="field-value" id="f-landmark"></p></div>
+          <div class="field-unit"><p class="field-label">رقم هاتف ولي الأمر</p><p class="field-value" dir="ltr" id="f-guardian-phone"></p></div>
+        </div>
+        <div class="field-unit mt-4">
+          <p class="field-label">ملاحظات</p>
+          <p class="field-value" id="f-notes"></p>
+        </div>
+      </div>
+
+      <div class="print-card print-signatures rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="grid grid-cols-1 gap-8 pt-6 text-center sm:grid-cols-2">
+          <div>
+            <p class="text-sm font-bold text-slate-800">مسؤول وحدة EMIS: أ.علي محمد علي</p>
+            <div class="mx-auto mt-8 w-40 border-t border-slate-400"></div>
+            <p class="mt-1 text-xs text-slate-400">التوقيع</p>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-slate-800">توقيع مدير المدرسة</p>
+            <div class="mx-auto mt-8 w-40 border-t border-slate-400"></div>
+            <p class="mt-1 text-xs text-slate-400">التوقيع</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="no-print pb-4 text-center text-xs text-slate-400">حقوق برمجة النظام محفوظة الاستاذ علي محمد علي ❤️</p>
+    </div>
+  </div>
+
+  <!-- Lightbox: click-to-enlarge student photo -->
+  <div id="lightbox-backdrop" class="no-print">
+    <button id="lightbox-close" class="absolute left-6 top-6 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20" aria-label="إغلاق">
+      <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+    </button>
+    <img id="lightbox-img" src="" alt="" class="max-h-[85vh] max-w-[90vw] rounded-2xl object-contain shadow-2xl" />
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/student-print.js"></script>
+</body>
+</html>

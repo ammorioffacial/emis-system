@@ -26,9 +26,11 @@ function renderStats(stats) {
 
 function renderStudents(students) {
   const tbody = document.getElementById("students-tbody");
+  const mobileList = document.getElementById("students-mobile-list");
 
   if (students.length === 0) {
     tbody.innerHTML = `<tr><td colspan="7" class="px-5 py-10 text-center text-slate-400">لا توجد نتائج مطابقة</td></tr>`;
+    mobileList.innerHTML = `<p class="px-4 py-10 text-center text-sm text-slate-400">لا توجد نتائج مطابقة</p>`;
     return;
   }
 
@@ -66,6 +68,42 @@ function renderStudents(students) {
             </div>
           </td>
         </tr>
+      `;
+    })
+    .join("");
+
+  // Card layout for small screens — a 7-column table just requires
+  // horizontal scrolling on a phone, which is unusable, so <sm shows
+  // this instead (the table itself stays hidden until sm:, see index.html).
+  mobileList.innerHTML = students
+    .map((s) => {
+      const fullName = `${s.student_first_name} ${s.student_second_name} ${s.student_third_name}`;
+      const date = formatDateEn(s.created_at);
+      return `
+        <div class="flex flex-col gap-2 px-4 py-3.5">
+          <div class="flex items-start justify-between gap-3">
+            <a href="student.html?id=${s.id}" class="font-semibold text-brand-700 hover:underline">${fullName}</a>
+            <span class="shrink-0 rounded-full px-2.5 py-1 text-xs font-semibold ${resultBadgeClass[s.previous_year_result]}">
+              ${PREVIOUS_RESULT_LABELS[s.previous_year_result]}
+            </span>
+          </div>
+          <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+            <span>🎓 ${s.current_grade ?? "—"}${s.section ? " - " + s.section : ""}</span>
+            <span dir="ltr">📞 ${s.guardian_phone ?? "—"}</span>
+            <span>📅 ${date}</span>
+          </div>
+          <div class="mt-1 flex items-center gap-2">
+            <a href="student.html?id=${s.id}" class="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-xs font-semibold text-slate-600 active:bg-slate-100" title="طباعة الاستمارة">
+              🖨 طباعة
+            </a>
+            <a href="add-student.html?id=${s.id}" class="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-amber-200 py-2 text-xs font-semibold text-amber-700 active:bg-amber-100" title="تعديل بيانات الطالب">
+              ✏️ تعديل
+            </a>
+            <button class="delete-row-btn flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-rose-200 py-2 text-xs font-semibold text-rose-600 active:bg-rose-100" data-student-id="${s.id}" title="حذف الطالب">
+              🗑 حذف
+            </button>
+          </div>
+        </div>
       `;
     })
     .join("");
@@ -306,12 +344,14 @@ async function init() {
   document.getElementById("filter-social-welfare-status").addEventListener("change", applySearch);
   document.getElementById("filter-clear-btn").addEventListener("click", clearFilters);
 
-  document.getElementById("students-tbody").addEventListener("click", (e) => {
+  function handleRowListClick(e) {
     const deleteBtn = e.target.closest(".delete-row-btn");
     if (deleteBtn) {
       handleDeleteStudent(deleteBtn.dataset.studentId);
     }
-  });
+  }
+  document.getElementById("students-tbody").addEventListener("click", handleRowListClick);
+  document.getElementById("students-mobile-list").addEventListener("click", handleRowListClick);
 
   document.getElementById("export-btn").addEventListener("click", () => {
     if (!currentStats) return;

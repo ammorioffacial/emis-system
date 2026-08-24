@@ -70,66 +70,68 @@
 
     <!-- Main -->
     <main class="flex-1 p-4 sm:p-6 lg:p-8">
-      <div class="mb-8 flex flex-wrap items-center justify-between gap-4">
-        <div>
-          <h1 class="text-2xl font-extrabold text-slate-900">لوحة التحكم</h1>
-          <p class="text-sm text-slate-500">نظرة عامة على بيانات الطلاب المسجلين</p>
-        </div>
-        <div class="flex flex-wrap items-center gap-3">
-          <button id="export-btn" class="flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
-            تصدير إلى Excel
-          </button>
-          <a href="add-student.html" class="flex items-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700">
-            إضافة طالب
-          </a>
-          <!-- Small clock pill -->
-          <div class="clock-pill flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-3.5 py-2 shadow-sm backdrop-blur-xl">
+      <div class="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <div class="flex items-center justify-between gap-3 sm:block">
+          <div>
+            <h1 class="text-xl font-extrabold text-slate-900 sm:text-2xl">لوحة التحكم</h1>
+            <p class="text-xs text-slate-500 sm:text-sm">نظرة عامة على بيانات الطلاب المسجلين</p>
+          </div>
+          <!-- Small clock pill: sits beside the title on phones, moves into the button row at sm+ -->
+          <div class="clock-pill flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-3 py-1.5 shadow-sm backdrop-blur-xl sm:order-3 sm:px-3.5 sm:py-2">
             <span class="text-sm">🕐</span>
             <span id="clock-time" class="font-mono text-sm font-bold tracking-wide text-slate-800">--:--</span>
-            <span class="h-3 w-px bg-slate-300"></span>
-            <span id="clock-dates" class="whitespace-nowrap text-xs font-medium text-slate-500"></span>
+            <span class="hidden h-3 w-px bg-slate-300 sm:block"></span>
+            <span id="clock-dates" class="hidden whitespace-nowrap text-xs font-medium text-slate-500 sm:inline"></span>
           </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+          <button id="export-btn" class="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
+            تصدير إلى Excel
+          </button>
+          <a href="add-student.html" class="flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700">
+            إضافة طالب
+          </a>
         </div>
       </div>
 
       <!-- Stat cards -->
-      <div class="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-blue-50/60 p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg">
-          <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-blue-100 text-blue-600 font-bold shadow-inner transition group-hover:scale-110">Σ</div>
+      <div class="mb-6 grid grid-cols-2 gap-3 sm:mb-8 sm:gap-4 lg:grid-cols-4">
+        <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-blue-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+          <div class="flex items-center gap-2.5 sm:gap-4">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-blue-100 text-blue-600 font-bold shadow-inner transition group-hover:scale-110">Σ</div>
             <div>
-              <p id="stat-total" class="text-2xl font-extrabold text-slate-900">0</p>
-              <p class="text-sm text-slate-500">إجمالي الطلاب</p>
+              <p id="stat-total" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+              <p class="text-xs text-slate-500 sm:text-sm">إجمالي الطلاب</p>
             </div>
           </div>
           <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-blue-200/30 blur-xl"></span>
         </div>
-        <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-amber-50/60 p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg">
-          <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-amber-600 font-bold shadow-inner transition group-hover:scale-110">+</div>
+        <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-amber-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+          <div class="flex items-center gap-2.5 sm:gap-4">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-amber-100 text-amber-600 font-bold shadow-inner transition group-hover:scale-110">+</div>
             <div>
-              <p id="stat-new" class="text-2xl font-extrabold text-slate-900">0</p>
-              <p class="text-sm text-slate-500">تسجيلات هذا الشهر</p>
+              <p id="stat-new" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+              <p class="text-xs text-slate-500 sm:text-sm">تسجيلات هذا الشهر</p>
             </div>
           </div>
           <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-amber-200/30 blur-xl"></span>
         </div>
-        <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-emerald-50/60 p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg">
-          <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600 font-bold shadow-inner transition group-hover:scale-110">✓</div>
+        <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-emerald-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+          <div class="flex items-center gap-2.5 sm:gap-4">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-emerald-100 text-emerald-600 font-bold shadow-inner transition group-hover:scale-110">✓</div>
             <div>
-              <p id="stat-passed" class="text-2xl font-extrabold text-slate-900">0</p>
-              <p class="text-sm text-slate-500">عدد الناجحين</p>
+              <p id="stat-passed" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+              <p class="text-xs text-slate-500 sm:text-sm">عدد الناجحين</p>
             </div>
           </div>
           <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-emerald-200/30 blur-xl"></span>
         </div>
-        <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-rose-50/60 p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:shadow-lg">
-          <div class="flex items-center gap-4">
-            <div class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-rose-100 text-rose-600 font-bold shadow-inner transition group-hover:scale-110">✕</div>
+        <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-rose-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+          <div class="flex items-center gap-2.5 sm:gap-4">
+            <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-rose-100 text-rose-600 font-bold shadow-inner transition group-hover:scale-110">✕</div>
             <div>
-              <p id="stat-failed" class="text-2xl font-extrabold text-slate-900">0</p>
-              <p class="text-sm text-slate-500">عدد الراسبين</p>
+              <p id="stat-failed" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+              <p class="text-xs text-slate-500 sm:text-sm">عدد الراسبين</p>
             </div>
           </div>
           <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-rose-200/30 blur-xl"></span>
@@ -207,7 +209,8 @@
           </div>
         </div>
 
-        <div class="overflow-x-auto">
+        <!-- Table (sm+): a 7-column table needs real width, so it's hidden on phones in favor of the card list below -->
+        <div class="hidden overflow-x-auto sm:block">
           <table class="w-full min-w-[720px] text-sm">
             <thead>
               <tr class="border-b border-slate-100 bg-slate-50 text-slate-500">
@@ -224,6 +227,11 @@
               <tr><td colspan="7" class="px-5 py-10 text-center text-slate-400">جارٍ التحميل...</td></tr>
             </tbody>
           </table>
+        </div>
+
+        <!-- Card list (phones only) -->
+        <div id="students-mobile-list" class="divide-y divide-slate-100 sm:hidden">
+          <p class="px-4 py-10 text-center text-sm text-slate-400">جارٍ التحميل...</p>
         </div>
       </div>
 

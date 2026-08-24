@@ -83,7 +83,7 @@ export function StudentForm() {
     const supabase = createClient();
     const { data, error: insertError } = await supabase
       .from("students")
-      .insert([form])
+      .insert([form] as any) // eslint-disable-line @typescript-eslint/no-explicit-any
       .select("id")
       .single();
 

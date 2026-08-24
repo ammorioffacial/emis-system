@@ -45,6 +45,31 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
+/* Live clock widget */
+/* ------------------------------------------------------------------ */
+.clock-blob {
+  position: absolute;
+  top: -30px;
+  left: -20px;
+  width: 140px;
+  height: 140px;
+  border-radius: 9999px;
+  background: radial-gradient(circle, #93c5fd, transparent 70%);
+  filter: blur(30px);
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+#clock-time .colon {
+  animation: clock-blink 2s steps(1) infinite;
+}
+
+@keyframes clock-blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0.25; }
+}
+
+/* ------------------------------------------------------------------ */
 /* Analytics panel: glassmorphism cards over a soft gradient-blob backdrop */
 /* ------------------------------------------------------------------ */
 .analytics-section {

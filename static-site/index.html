@@ -12,6 +12,14 @@
   <link rel="stylesheet" href="css/styles.css" />
 </head>
 <body class="font-tajawal bg-slate-50 text-slate-900 antialiased">
+  <!-- Shown until the auth/role check in dashboard.js resolves, so a
+       data_entry user redirected away never sees a flash of dashboard
+       content (stats, table, nav) before navigating off. -->
+  <div id="auth-loading" class="flex min-h-screen items-center justify-center">
+    <div class="h-8 w-8 animate-spin rounded-full border-4 border-brand-200 border-t-brand-600"></div>
+  </div>
+
+  <div id="app-root" style="display:none">
   <!-- Mobile topbar (hidden on lg+, where the sidebar takes over) -->
   <header class="no-print flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 lg:hidden">
     <div class="flex items-center gap-2">
@@ -235,6 +243,7 @@
         حقوق برمجة النظام محفوظة الاستاذ علي محمد علي ❤️
       </footer>
     </main>
+  </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>

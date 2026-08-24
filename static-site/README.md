@@ -34,11 +34,7 @@ static-site/
 │   ├── pdf-export.js                        # pdf-lib export onto image1.pdf (Arabic-shaped)
 │   └── mobile-nav.js                         # Mobile drawer toggle (index.html, add-student.html)
 ├── supabase/
-│   ├── schema.sql                    # Full schema for a NEW project (tables, RLS, views, storage)
-│   ├── add-photo-migration.sql        # Adds photo_url + storage bucket to an existing DB
-│   ├── add-v2-fields-migration.sql     # Adds statistical number, special-needs type, academic
-│   │                                       stage/branch, structured address, notes to an existing DB
-│   └── restore-auth-migration.sql        # Reverts RLS from anon back to authenticated, if ever needed
+│   └── schema.sql                    # Full consolidated schema (tables, roles, RLS, views, storage)
 ├── vercel.json               # Security headers for Vercel deploys
 ├── render.yaml               # Render.com static site blueprint
 └── README.md
@@ -50,9 +46,11 @@ pdf-lib + fontkit + arabic-reshaper (PDF export only) — no `npm install` step 
 
 ## Setup
 
-1. **Create a Supabase project.** In the SQL editor, run `supabase/schema.sql`
-   for a new project. For an already-provisioned database, instead run
-   `add-photo-migration.sql` and `add-v2-fields-migration.sql` (both idempotent).
+1. **Create a Supabase project.** In the SQL editor, run `supabase/schema.sql`.
+   It's a single consolidated file safe to re-run on a fresh/empty project;
+   it is NOT safe to re-run against a database that already has real student
+   data (see the warning at the top of the file — `drop type ... cascade`
+   would drop dependent columns and their data).
 
 2. **Create at least one Supabase Auth user** (Authentication → Users → Add user) —
    `login.html` signs in against Supabase Auth, not a custom table.

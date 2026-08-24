@@ -214,7 +214,7 @@ async function init() {
 
   const params = new URLSearchParams(window.location.search);
   // Restricted users can only ever create new partial records — they have
-  // no SELECT access (see add-role-based-access-migration.sql), so edit
+  // no SELECT access to other students' rows (see supabase/schema.sql), so edit
   // mode is not reachable for them even if ?id= is present in the URL.
   const editId = restricted ? null : params.get("id");
 

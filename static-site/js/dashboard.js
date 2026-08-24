@@ -285,12 +285,16 @@ async function init() {
   const session = await requireAuth();
   if (!session) return;
 
-  // Restricted "data entry" users never see the dashboard — their whole
-  // job is submitting partial records via add-student.html.
-  if (isDataEntryUser(session)) {
-    window.location.href = "add-student.html";
+  // Restricted "data entry" users never see the dashboard or its stats/
+  // table/charts — bounce them out before any of it renders or becomes
+  // visible (#app-root stays display:none the whole time for this role).
+  if (getUserRole(session) !== "admin") {
+    window.location.href = "student.html";
     return;
   }
+
+  document.getElementById("auth-loading").remove();
+  document.getElementById("app-root").style.display = "";
 
   async function handleLogout() {
     await signOut();

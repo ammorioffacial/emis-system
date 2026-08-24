@@ -173,6 +173,10 @@ async function init() {
   if (!session) return;
   const restricted = isDataEntryUser(session);
 
+  // Never briefly flash the "back to dashboard" link for a restricted
+  // user — it stays display:none in the HTML until we know the role.
+  if (!restricted) document.getElementById("back-to-dashboard-link").style.display = "";
+
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
   const loadingEl = document.getElementById("loading-state");

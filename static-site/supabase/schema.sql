@@ -2,9 +2,32 @@
 -- EMIS (نظام إضافة التلاميذ) - Supabase Database Schema
 -- Static-site edition: same schema as the Next.js version, standalone.
 -- Replicates every field on the "استمارة إضافة التلاميذ لنظام EMIS" form.
+--
+-- This is now the SINGLE consolidated schema file — it folds in what
+-- used to be four separate migration files (add-photo-migration.sql,
+-- add-v2-fields-migration.sql, add-role-based-access-migration.sql,
+-- restore-auth-migration.sql), which have been removed.
+--
+-- ** WARNING — this file is idempotent for a FRESH database, not safe
+-- ** as a live migration against a database that already has data.
+-- ** The `drop type ... cascade` statements below will silently DROP
+-- ** every column built on that type (and its data) if the type
+-- ** already exists and the table is already populated. Only run this
+-- ** whole file against a new/empty Supabase project. If you have an
+-- ** existing EMIS database with real student data, do not re-run this
+-- ** file — apply targeted `alter table` statements by hand instead.
 -- =====================================================================
 
 create extension if not exists "pgcrypto";
+
+drop type if exists id_type cascade;
+drop type if exists economic_level cascade;
+drop type if exists previous_year_result cascade;
+drop type if exists yes_no cascade;
+drop type if exists blood_type cascade;
+drop type if exists special_needs_type cascade;
+drop type if exists educational_stage cascade;
+drop type if exists preparatory_branch cascade;
 
 create type id_type as enum ('national_id', 'nationality');
 create type economic_level as enum ('below_poverty', 'poor', 'middle', 'high');
@@ -50,7 +73,7 @@ create table if not exists public.students (
 
   -- نوع الهوية الطالب
   -- (nullable: a restricted "data entry" user's partial submission may
-  -- omit this — see supabase/add-role-based-access-migration.sql)
+  -- omit this)
   student_id_type id_type,
   student_national_id_number text,
   student_civil_status_id_number text,
@@ -121,6 +144,7 @@ begin
 end;
 $$;
 
+drop trigger if exists trg_students_updated_at on public.students;
 create trigger trg_students_updated_at
 before update on public.students
 for each row execute function public.set_updated_at();
@@ -139,14 +163,32 @@ create index if not exists idx_students_has_social_welfare on public.students (h
 -- every read/write requires a signed-in Supabase Auth session (see
 -- login.html + requireAuth() in js/supabase-client.js).
 --
--- Role-aware: a user's role lives on Supabase Auth app_metadata (set via
--- the Supabase dashboard only — see add-role-based-access-migration.sql
--- for details). role = 'data_entry' can only INSERT; everyone else
+-- Role-aware: a user's role lives on Supabase Auth app_metadata — set
+-- only via the Supabase dashboard (Authentication -> Users -> select
+-- user -> edit "Raw App Meta Data" -> { "role": "data_entry" }), never
+-- client-side, which is what makes it safe to trust here. A user with
+-- role = 'data_entry' can only INSERT, plus SELECT the rows they
+-- created themselves (needed for the "save then print" flow on
+-- student.html right after submitting add-student.html). Everyone else
 -- (role = 'admin' or no role set, for backward compatibility) has full
 -- access. This is enforced here, not just hidden in the UI.
 -- ---------------------------------------------------------------------
 
 alter table public.students enable row level security;
+
+drop policy if exists "Public can read students" on public.students;
+drop policy if exists "Public can insert students" on public.students;
+drop policy if exists "Public can update students" on public.students;
+drop policy if exists "Public can delete students" on public.students;
+drop policy if exists "Authenticated users can read students" on public.students;
+drop policy if exists "Authenticated users can insert students" on public.students;
+drop policy if exists "Authenticated users can update students" on public.students;
+drop policy if exists "Authenticated users can delete students" on public.students;
+drop policy if exists "Admins can read students" on public.students;
+drop policy if exists "Data entry users can read their own submissions" on public.students;
+drop policy if exists "All authenticated users can insert students" on public.students;
+drop policy if exists "Admins can update students" on public.students;
+drop policy if exists "Admins can delete students" on public.students;
 
 create policy "Admins can read students"
   on public.students for select
@@ -230,6 +272,11 @@ grant select on public.student_stats_by_previous_school to authenticated;
 insert into storage.buckets (id, name, public)
 values ('student-photos', 'student-photos', true)
 on conflict (id) do nothing;
+
+drop policy if exists "Authenticated users can upload student photos" on storage.objects;
+drop policy if exists "Authenticated users can update student photos" on storage.objects;
+drop policy if exists "Authenticated users can delete student photos" on storage.objects;
+drop policy if exists "Anyone can view student photos" on storage.objects;
 
 create policy "Authenticated users can upload student photos"
   on storage.objects for insert

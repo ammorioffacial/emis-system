@@ -184,14 +184,9 @@ function destroyChart(key) {
   }
 }
 
-function renderNoDataMessage(canvasId) {
-  const canvas = document.getElementById(canvasId);
-  const ctx = canvas.getContext("2d");
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.fillStyle = "#94a3b8";
-  ctx.font = "13px Tajawal, sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText("لا توجد بيانات", canvas.width / 2, canvas.height / 2);
+function toggleChartEmptyState(canvasId, isEmpty) {
+  document.getElementById(canvasId).classList.toggle("hidden", isEmpty);
+  document.getElementById(`${canvasId}-empty`).classList.toggle("hidden", !isEmpty);
 }
 
 async function renderAnalyticsPanel() {
@@ -203,13 +198,12 @@ async function renderAnalyticsPanel() {
     ]);
 
     destroyChart("gradeSection");
-    if (byGradeSection.length === 0) {
-      renderNoDataMessage("chart-grade-section");
-    } else {
+    toggleChartEmptyState("chart-grade-section", byGradeSection.length === 0);
+    if (byGradeSection.length > 0) {
       charts.gradeSection = new Chart(document.getElementById("chart-grade-section"), {
         type: "bar",
         data: {
-          labels: byGradeSection.map((r) => `${r.current_grade}${r.section ? " - " + r.section : ""}`),
+          labels: byGradeSection.map((r) => `${r.current_grade ?? "غير محدد"}${r.section ? " - " + r.section : ""}`),
           datasets: [{ label: "عدد الطلاب", data: byGradeSection.map((r) => r.student_count), backgroundColor: "#2563eb", borderRadius: 6 }],
         },
         options: {
@@ -223,9 +217,8 @@ async function renderAnalyticsPanel() {
     }
 
     destroyChart("specialNeeds");
-    if (bySpecialNeeds.length === 0) {
-      renderNoDataMessage("chart-special-needs");
-    } else {
+    toggleChartEmptyState("chart-special-needs", bySpecialNeeds.length === 0);
+    if (bySpecialNeeds.length > 0) {
       charts.specialNeeds = new Chart(document.getElementById("chart-special-needs"), {
         type: "doughnut",
         data: {
@@ -241,9 +234,8 @@ async function renderAnalyticsPanel() {
     }
 
     destroyChart("previousSchool");
-    if (byPreviousSchool.length === 0) {
-      renderNoDataMessage("chart-previous-school");
-    } else {
+    toggleChartEmptyState("chart-previous-school", byPreviousSchool.length === 0);
+    if (byPreviousSchool.length > 0) {
       charts.previousSchool = new Chart(document.getElementById("chart-previous-school"), {
         type: "bar",
         data: {

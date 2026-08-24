@@ -83,7 +83,7 @@ export function StudentForm() {
     const supabase = createClient();
     const { data, error: insertError } = await supabase
       .from("students")
-      .insert(form)
+      .insert([form])
       .select("id")
       .single();
 

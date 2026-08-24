@@ -148,6 +148,132 @@ function applyDataEntryRestrictions() {
 }
 
 // ---------------------------------------------------------------------
+// Auto-save draft: mirrors every field into localStorage as the user
+// types, so an accidental tab close doesn't lose their work. Scoped per
+// mode (new vs. editing a specific student) so drafts never bleed
+// across different records.
+// ---------------------------------------------------------------------
+function draftStorageKey(editId) {
+  return editId ? `emis-draft-edit-${editId}` : "emis-draft-new";
+}
+
+function saveDraft(form, editId) {
+  const draft = {};
+  Array.from(form.elements).forEach((field) => {
+    if (!field.name || field.type === "file") return;
+    draft[field.name] = field.value;
+  });
+  localStorage.setItem(draftStorageKey(editId), JSON.stringify(draft));
+}
+
+function clearDraft(editId) {
+  localStorage.removeItem(draftStorageKey(editId));
+}
+
+function initDraftAutoSave(form, editId) {
+  form.addEventListener("input", () => saveDraft(form, editId));
+  form.addEventListener("change", () => saveDraft(form, editId));
+}
+
+/** Offers to restore a saved draft; returns true if one was found (whether or not the user restored it). */
+function offerDraftRestore(form, editId) {
+  const raw = localStorage.getItem(draftStorageKey(editId));
+  if (!raw) return false;
+
+  let draft;
+  try {
+    draft = JSON.parse(raw);
+  } catch {
+    localStorage.removeItem(draftStorageKey(editId));
+    return false;
+  }
+
+  if (!confirm("توجد بيانات محفوظة تلقائياً من محاولة سابقة لم تكتمل. هل تريد استعادتها؟")) {
+    clearDraft(editId);
+    return true;
+  }
+
+  Object.entries(draft).forEach(([name, value]) => {
+    const field = form.elements.namedItem(name);
+    if (!field || field instanceof RadioNodeList || field.disabled) return;
+    field.value = value;
+  });
+
+  // Re-run every field's own change handling so dependent UI (id-type
+  // fields, special-needs type, stage/grade cascades) matches the
+  // restored values instead of staying at their initial defaults.
+  applyIdTypeVisibility("student");
+  applyIdTypeVisibility("father");
+  updateSpecialNeedsTypeVisibility();
+  const currentStageSelect = document.querySelector('.stage-select[name="current_educational_stage"]');
+  if (currentStageSelect) {
+    populateGradeOptions(document.getElementById("current_stage_grade"), currentStageSelect.value, draft.current_grade);
+    updatePreparatoryBranchVisibility();
+    if (draft.current_preparatory_branch) {
+      document.querySelector('select[name="current_preparatory_branch"]').value = draft.current_preparatory_branch;
+    }
+  }
+
+  return true;
+}
+
+// ---------------------------------------------------------------------
+// Duplicate-student check: as the student's name and mother's name are
+// filled in, warn if a record with the exact same six name parts
+// already exists. Best-effort only — a data_entry user's RLS grants
+// them SELECT on just their own past submissions (see supabase/schema.sql),
+// so this can't see duplicates created by someone else for that role.
+// ---------------------------------------------------------------------
+function initDuplicateCheck(form) {
+  const nameFields = [
+    "student_first_name",
+    "student_second_name",
+    "student_third_name",
+    "mother_first_name",
+    "mother_second_name",
+    "mother_third_name",
+  ];
+  const warningEl = document.getElementById("duplicate-warning");
+  if (!warningEl) return;
+
+  let debounceTimer;
+  async function checkForDuplicate() {
+    const values = nameFields.map((name) => form.elements.namedItem(name)?.value.trim() ?? "");
+    if (values.some((v) => !v)) {
+      warningEl.classList.add("hidden");
+      return;
+    }
+
+    try {
+      const { data, error } = await window.supabaseClient
+        .from("students")
+        .select("id")
+        .eq("student_first_name", values[0])
+        .eq("student_second_name", values[1])
+        .eq("student_third_name", values[2])
+        .eq("mother_first_name", values[3])
+        .eq("mother_second_name", values[4])
+        .eq("mother_third_name", values[5])
+        .limit(1);
+
+      if (error) return; // best-effort: RLS/network errors just skip the warning
+      warningEl.classList.toggle("hidden", !(data && data.length > 0));
+    } catch {
+      // best-effort only
+    }
+  }
+
+  nameFields.forEach((name) => {
+    const field = form.elements.namedItem(name);
+    if (!field) return;
+    field.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(checkForDuplicate, 500);
+    });
+  });
+}
+
+// ---------------------------------------------------------------------
 // Edit mode: prefill every field from an existing student record.
 // ---------------------------------------------------------------------
 function prefillForm(form, s) {
@@ -231,7 +357,12 @@ async function init() {
       errorEl.textContent = "تعذر تحميل بيانات الطالب للتعديل: " + err.message;
       errorEl.classList.remove("hidden");
     }
+  } else {
+    offerDraftRestore(form, editId);
   }
+
+  initDraftAutoSave(form, editId);
+  initDuplicateCheck(form);
 
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
@@ -244,6 +375,7 @@ async function init() {
     try {
       const payload = buildPayloadFromForm(form);
       const savedId = editId ? (await updateStudent(editId, payload)).id : (await insertStudent(payload)).id;
+      clearDraft(editId);
       window.location.href = `student.html?id=${savedId}`;
     } catch (err) {
       errorEl.textContent = err.message || "حدث خطأ أثناء الحفظ";

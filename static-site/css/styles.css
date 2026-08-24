@@ -12,6 +12,39 @@ body {
 }
 
 /* ------------------------------------------------------------------ */
+/* KPI card 3D tilt + cursor glow (js/kpi-tilt.js drives --x/--y/--rx/--ry) */
+/* ------------------------------------------------------------------ */
+.kpi-card {
+  --x: 50%;
+  --y: 50%;
+  --rx: 0deg;
+  --ry: 0deg;
+  transform: perspective(600px) rotateX(var(--rx)) rotateY(var(--ry));
+  will-change: transform;
+}
+
+.kpi-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(220px circle at var(--x) var(--y), rgba(255, 255, 255, 0.55), transparent 65%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.kpi-card:hover::after {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kpi-card {
+    transform: none !important;
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /* Print rules: hide dashboard/nav chrome, keep only the printable form */
 /* ------------------------------------------------------------------ */
 @media print {

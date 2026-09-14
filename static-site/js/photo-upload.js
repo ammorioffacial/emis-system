@@ -12,9 +12,17 @@ function initPhotoUpload(uploadFn = uploadStudentPhoto) {
   const statusEl = document.getElementById("photo-upload-status");
   if (!input) return;
 
+  const MAX_PHOTO_BYTES = 10 * 1024 * 1024; // 10MB
+
   input.addEventListener("change", async () => {
     const file = input.files[0];
     if (!file) return;
+
+    if (file.size > MAX_PHOTO_BYTES) {
+      alert("حجم الصورة أكبر من الحد المسموح (10 ميجابايت). الرجاء اختيار صورة أصغر.");
+      input.value = "";
+      return;
+    }
 
     const localUrl = URL.createObjectURL(file);
     preview.src = localUrl;

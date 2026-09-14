@@ -73,6 +73,17 @@ function init() {
     e.preventDefault();
     if (!form.reportValidity()) return;
 
+    // The file input is visually hidden (styled via the avatar label
+    // instead), which exempts it from native `required` validation —
+    // per the WHATWG spec, an element with a hidden ancestor is barred
+    // from constraint validation. Enforce it manually instead.
+    if (!document.getElementById("photo_url_hidden").value) {
+      errorEl.textContent = "الصورة الشخصية مطلوبة";
+      errorEl.classList.remove("hidden");
+      errorEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      return;
+    }
+
     errorEl.classList.add("hidden");
     submitBtn.disabled = true;
     submitBtn.textContent = "جارٍ الإرسال...";

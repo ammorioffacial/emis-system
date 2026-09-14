@@ -54,23 +54,23 @@
         <h2 class="mb-4 text-base font-bold text-slate-900">المعلومات الشخصية</h2>
         <p class="mb-2 text-xs font-bold text-slate-400">الاسم الرباعي</p>
         <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-4">
-          <div><label class="lbl">الاسم الأول</label><input required maxlength="15" class="inp" name="teacher_first_name" /></div>
-          <div><label class="lbl">الاسم الثاني</label><input required maxlength="15" class="inp" name="teacher_second_name" /></div>
-          <div><label class="lbl">الاسم الثالث</label><input required maxlength="15" class="inp" name="teacher_third_name" /></div>
-          <div><label class="lbl">الاسم الرابع</label><input required maxlength="15" class="inp" name="teacher_fourth_name" /></div>
+          <div><label class="lbl">الاسم الأول</label><input required maxlength="50" class="inp" name="teacher_first_name" /></div>
+          <div><label class="lbl">الاسم الثاني</label><input required maxlength="50" class="inp" name="teacher_second_name" /></div>
+          <div><label class="lbl">الاسم الثالث</label><input required maxlength="50" class="inp" name="teacher_third_name" /></div>
+          <div><label class="lbl">الاسم الرابع</label><input required maxlength="50" class="inp" name="teacher_fourth_name" /></div>
         </div>
         <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div><label class="lbl">اللقب</label><input required maxlength="15" class="inp" name="teacher_surname" /></div>
+          <div><label class="lbl">اللقب</label><input required maxlength="50" class="inp" name="teacher_surname" /></div>
           <div><label class="lbl">تاريخ التولد</label><input required type="date" class="inp" name="date_of_birth" /></div>
         </div>
         <p class="mb-2 text-xs font-bold text-slate-400">اسم الأم الثلاثي</p>
         <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div><label class="lbl">الاسم الأول</label><input required maxlength="15" class="inp" name="mother_first_name" /></div>
-          <div><label class="lbl">الاسم الثاني</label><input required maxlength="15" class="inp" name="mother_second_name" /></div>
-          <div><label class="lbl">الاسم الثالث</label><input required maxlength="15" class="inp" name="mother_third_name" /></div>
+          <div><label class="lbl">الاسم الأول</label><input required maxlength="50" class="inp" name="mother_first_name" /></div>
+          <div><label class="lbl">الاسم الثاني</label><input required maxlength="50" class="inp" name="mother_second_name" /></div>
+          <div><label class="lbl">الاسم الثالث</label><input required maxlength="50" class="inp" name="mother_third_name" /></div>
         </div>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div><label class="lbl">محل الولادة</label><input maxlength="30" class="inp" name="place_of_birth" /></div>
+          <div><label class="lbl">محل الولادة</label><input required maxlength="50" class="inp" name="place_of_birth" /></div>
         </div>
       </section>
 
@@ -83,14 +83,14 @@
               <option value="بطاقة وطنية">بطاقة وطنية</option>
             </select>
           </div>
-          <div><label class="lbl">بلد الإصدار</label><input maxlength="30" class="inp" name="issuing_country" value="العراق" /></div>
-          <div><label class="lbl">رقم البطاقة الوطنية</label><input required dir="ltr" inputmode="numeric" maxlength="15" class="inp" name="national_card_number" /></div>
-          <div><label class="lbl">الرقم الوظيفي</label><input dir="ltr" maxlength="15" class="inp" name="employee_number" /></div>
-          <div><label class="lbl">الرقم العائلي</label><input dir="ltr" maxlength="15" class="inp" name="family_number" /></div>
-          <div><label class="lbl">مسقط الرأس</label><input maxlength="30" class="inp" name="birthplace" /></div>
+          <div><label class="lbl">بلد الإصدار</label><input required maxlength="50" class="inp" name="issuing_country" value="العراق" /></div>
+          <div><label class="lbl">رقم البطاقة الوطنية</label><input required dir="ltr" inputmode="numeric" maxlength="50" class="inp" name="national_card_number" /></div>
+          <div><label class="lbl">الرقم الوظيفي</label><input required dir="ltr" maxlength="50" class="inp" name="employee_number" /></div>
+          <div><label class="lbl">الرقم العائلي</label><input required dir="ltr" maxlength="50" class="inp" name="family_number" /></div>
+          <div><label class="lbl">مسقط الرأس</label><input required maxlength="50" class="inp" name="birthplace" /></div>
           <div>
             <label class="lbl">الحالة الاجتماعية</label>
-            <select class="inp" name="marital_status">
+            <select required class="inp" name="marital_status">
               <option value="">—</option>
               <option value="أعزب">أعزب</option>
               <option value="متزوج">متزوج</option>
@@ -100,7 +100,7 @@
           </div>
           <div>
             <label class="lbl">فئة الدم</label>
-            <select class="inp" name="blood_type" id="blood_type"><option value="">—</option></select>
+            <select required class="inp" name="blood_type" id="blood_type"><option value="">—</option></select>
           </div>
         </div>
       </section>
@@ -120,29 +120,29 @@
             <label class="lbl">المسمى الوظيفي</label>
             <select required class="inp" name="job_title" id="job_title"><option value="">—</option></select>
           </div>
-          <div><label class="lbl">العنوان الوظيفي</label><input maxlength="50" class="inp" name="job_address" /></div>
-          <div><label class="lbl">المنصب الحالي</label><input maxlength="30" class="inp" name="current_position" /></div>
-          <div><label class="lbl">تاريخ اول تعيين</label><input type="date" class="inp" name="first_appointment_date" /></div>
+          <div><label class="lbl">العنوان الوظيفي</label><input required maxlength="50" class="inp" name="job_address" /></div>
+          <div><label class="lbl">المنصب الحالي</label><input required maxlength="50" class="inp" name="current_position" /></div>
+          <div><label class="lbl">تاريخ اول تعيين</label><input required type="date" class="inp" name="first_appointment_date" /></div>
         </div>
       </section>
 
       <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
         <h2 class="mb-4 text-base font-bold text-slate-900">التحصيل الدراسي</h2>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div><label class="lbl">اسم الكلية أو المعهد</label><input maxlength="60" class="inp" name="college_name" /></div>
-          <div><label class="lbl">سنة التخرج</label><input dir="ltr" inputmode="numeric" pattern="^[0-9]{4}$" title="سنة مكونة من 4 أرقام" maxlength="4" class="inp" name="graduation_year" /></div>
-          <div><label class="lbl">الاختصاص</label><input maxlength="40" class="inp" name="specialization" /></div>
+          <div><label class="lbl">اسم الكلية أو المعهد</label><input required maxlength="50" class="inp" name="college_name" /></div>
+          <div><label class="lbl">سنة التخرج</label><input required dir="ltr" inputmode="numeric" pattern="^[0-9]{4}$" title="سنة مكونة من 4 أرقام" maxlength="50" class="inp" name="graduation_year" /></div>
+          <div><label class="lbl">الاختصاص</label><input required maxlength="50" class="inp" name="specialization" /></div>
         </div>
       </section>
 
       <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
         <h2 class="mb-4 text-base font-bold text-slate-900">جهة الاتصال في حالة الطارئة</h2>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div><label class="lbl">اسم جهة الاتصال</label><input maxlength="30" class="inp" name="emergency_contact_name" /></div>
-          <div><label class="lbl">صلة جهة الاتصال</label><input maxlength="20" class="inp" name="emergency_contact_relation" /></div>
+          <div><label class="lbl">اسم جهة الاتصال</label><input required maxlength="50" class="inp" name="emergency_contact_name" /></div>
+          <div><label class="lbl">صلة جهة الاتصال</label><input required maxlength="50" class="inp" name="emergency_contact_relation" /></div>
           <div>
             <label class="lbl">رقم جهة الاتصال</label>
-            <input dir="ltr" class="inp" name="emergency_contact_phone" inputmode="numeric" pattern="^07[0-9]{9}$" title="11 رقماً يبدأ بـ 07" maxlength="11" />
+            <input required dir="ltr" class="inp" name="emergency_contact_phone" inputmode="numeric" pattern="^07[0-9]{9}$" title="11 رقماً يبدأ بـ 07" maxlength="50" />
           </div>
         </div>
       </section>
@@ -150,22 +150,22 @@
       <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
         <h2 class="mb-4 text-base font-bold text-slate-900">المكان (العنوان)</h2>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-          <div><label class="lbl">المدينة / قرية</label><input maxlength="30" class="inp" name="city_village" /></div>
-          <div><label class="lbl">الحي</label><input maxlength="30" class="inp" name="neighborhood" /></div>
-          <div><label class="lbl">محلة</label><input maxlength="20" class="inp" name="mahalla" /></div>
-          <div><label class="lbl">زقاق</label><input maxlength="5" class="inp" name="alley" /></div>
-          <div><label class="lbl">عنوان 1</label><input maxlength="60" class="inp" name="address_line" /></div>
-          <div><label class="lbl">اقرب نقطة دالة</label><input maxlength="50" class="inp" name="nearest_landmark" /></div>
+          <div><label class="lbl">المدينة / قرية</label><input required maxlength="50" class="inp" name="city_village" /></div>
+          <div><label class="lbl">الحي</label><input required maxlength="50" class="inp" name="neighborhood" /></div>
+          <div><label class="lbl">محلة</label><input required maxlength="50" class="inp" name="mahalla" /></div>
+          <div><label class="lbl">زقاق</label><input required maxlength="50" class="inp" name="alley" /></div>
+          <div><label class="lbl">عنوان 1</label><input required maxlength="50" class="inp" name="address_line" /></div>
+          <div><label class="lbl">اقرب نقطة دالة</label><input required maxlength="50" class="inp" name="nearest_landmark" /></div>
         </div>
       </section>
 
       <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
         <h2 class="mb-4 text-base font-bold text-slate-900">معلومات الاتصال</h2>
         <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div><label class="lbl">البريد الإلكتروني</label><input required type="email" dir="ltr" maxlength="100" class="inp" name="email" /></div>
+          <div><label class="lbl">البريد الإلكتروني</label><input required type="email" dir="ltr" maxlength="50" class="inp" name="email" /></div>
           <div>
             <label class="lbl">رقم هاتف المعلم</label>
-            <input required dir="ltr" class="inp" name="phone" inputmode="numeric" pattern="^07[0-9]{9}$" title="11 رقماً يبدأ بـ 07" maxlength="11" />
+            <input required dir="ltr" class="inp" name="phone" inputmode="numeric" pattern="^07[0-9]{9}$" title="11 رقماً يبدأ بـ 07" maxlength="50" />
           </div>
         </div>
       </section>

@@ -161,14 +161,16 @@ async function updateStudentPhotoUrl(id, photoUrl) {
 // session per the "Admins can read/update/delete teachers" policies.
 // ---------------------------------------------------------------------
 
+/**
+ * No .select() here deliberately: chaining .select("id").single() after
+ * insert asks PostgREST to read the new row back, which is governed by
+ * the table's SELECT policy (admins only) — an anon submitter has no
+ * such policy, so that would turn a successful insert into an RLS
+ * error. The registration form doesn't need the row back anyway.
+ */
 async function insertTeacher(payload) {
-  const { data, error } = await window.supabaseClient
-    .from("teachers")
-    .insert(payload)
-    .select("id")
-    .single();
+  const { error } = await window.supabaseClient.from("teachers").insert(payload);
   if (error) throw error;
-  return data;
 }
 
 async function uploadTeacherPhoto(file) {

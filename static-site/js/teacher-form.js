@@ -92,11 +92,20 @@ function init() {
       const payload = buildTeacherPayloadFromForm(form);
       await insertTeacher(payload);
       const modal = document.getElementById("success-modal");
+      const countdownEl = document.getElementById("redirect-countdown");
       modal.classList.remove("hidden");
       modal.classList.add("flex");
+
+      let secondsLeft = 15;
+      const countdownTimer = setInterval(() => {
+        secondsLeft -= 1;
+        countdownEl.textContent = secondsLeft;
+        if (secondsLeft <= 0) clearInterval(countdownTimer);
+      }, 1000);
+
       setTimeout(() => {
         window.location.href = "index.html";
-      }, 2200);
+      }, 15000);
       return;
     } catch (err) {
       errorEl.textContent = err.message || "حدث خطأ أثناء الإرسال";

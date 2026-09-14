@@ -84,7 +84,7 @@
             </select>
           </div>
           <div><label class="lbl">بلد الإصدار</label><input required maxlength="50" class="inp" name="issuing_country" value="العراق" /></div>
-          <div><label class="lbl">رقم البطاقة الوطنية</label><input required dir="ltr" inputmode="numeric" maxlength="50" class="inp" name="national_card_number" /></div>
+          <div><label class="lbl">رقم البطاقة الوطنية</label><input required dir="ltr" inputmode="numeric" pattern="^[0-9]{12}$" title="12 رقماً" maxlength="12" class="inp" name="national_card_number" /></div>
           <div><label class="lbl">الرقم الوظيفي</label><input required dir="ltr" maxlength="50" class="inp" name="employee_number" /></div>
           <div><label class="lbl">الرقم العائلي</label><input required dir="ltr" maxlength="50" class="inp" name="family_number" /></div>
           <div><label class="lbl">مسقط الرأس</label><input required maxlength="50" class="inp" name="birthplace" /></div>
@@ -142,7 +142,7 @@
           <div><label class="lbl">صلة جهة الاتصال</label><input required maxlength="50" class="inp" name="emergency_contact_relation" /></div>
           <div>
             <label class="lbl">رقم جهة الاتصال</label>
-            <input required dir="ltr" class="inp" name="emergency_contact_phone" inputmode="numeric" pattern="^07[0-9]{9}$" title="11 رقماً يبدأ بـ 07" maxlength="50" />
+            <input required dir="ltr" class="inp" name="emergency_contact_phone" inputmode="numeric" pattern="^07[0-9]{9}$" title="11 رقماً يبدأ بـ 07" maxlength="11" />
           </div>
         </div>
       </section>
@@ -165,7 +165,7 @@
           <div><label class="lbl">البريد الإلكتروني</label><input required type="email" dir="ltr" maxlength="50" class="inp" name="email" /></div>
           <div>
             <label class="lbl">رقم هاتف المعلم</label>
-            <input required dir="ltr" class="inp" name="phone" inputmode="numeric" pattern="^07[0-9]{9}$" title="11 رقماً يبدأ بـ 07" maxlength="50" />
+            <input required dir="ltr" class="inp" name="phone" inputmode="numeric" pattern="^07[0-9]{9}$" title="11 رقماً يبدأ بـ 07" maxlength="11" />
           </div>
         </div>
       </section>
@@ -190,7 +190,7 @@
       </div>
       <h2 class="text-lg font-extrabold text-slate-900">تم تسجيلك بنجاح</h2>
       <p class="mt-2 text-sm text-slate-500">شكراً لك، تم استلام بيانات تسجيلك وسيتم مراجعتها من قبل الإدارة.</p>
-      <p class="mt-4 text-xs text-slate-400">سيتم تحويلك إلى الصفحة الرئيسية تلقائياً...</p>
+      <p class="mt-4 text-xs text-slate-400">سيتم تحويلك إلى الصفحة الرئيسية خلال <span id="redirect-countdown">15</span> ثانية...</p>
     </div>
   </div>
 

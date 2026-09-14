@@ -67,7 +67,6 @@ function init() {
 
   const form = document.getElementById("teacher-form");
   const errorEl = document.getElementById("form-error");
-  const successEl = document.getElementById("form-success");
   const submitBtn = document.getElementById("submit-btn");
 
   form.addEventListener("submit", async (e) => {
@@ -75,19 +74,19 @@ function init() {
     if (!form.reportValidity()) return;
 
     errorEl.classList.add("hidden");
-    successEl.classList.add("hidden");
     submitBtn.disabled = true;
     submitBtn.textContent = "جارٍ الإرسال...";
 
     try {
       const payload = buildTeacherPayloadFromForm(form);
       await insertTeacher(payload);
-      form.reset();
-      document.getElementById("photo-preview").classList.add("hidden");
-      document.getElementById("photo-placeholder-icon").classList.remove("hidden");
-      successEl.textContent = "تم إرسال طلب التسجيل بنجاح. شكراً لك.";
-      successEl.classList.remove("hidden");
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      const modal = document.getElementById("success-modal");
+      modal.classList.remove("hidden");
+      modal.classList.add("flex");
+      setTimeout(() => {
+        window.location.href = "index.html";
+      }, 2200);
+      return;
     } catch (err) {
       errorEl.textContent = err.message || "حدث خطأ أثناء الإرسال";
       errorEl.classList.remove("hidden");

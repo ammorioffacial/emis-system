@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>تسجيل الأساتذة - نظام EMIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="font-tajawal bg-slate-50 text-slate-900 antialiased">
+  <header class="no-print border-b border-slate-200 bg-white px-4 py-3">
+    <div class="mx-auto flex max-w-5xl items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">E</div>
+        <p class="text-sm font-bold">نظام EMIS</p>
+      </a>
+      <a href="index.html" class="text-sm font-medium text-slate-600 hover:text-brand-700">→ العودة للصفحة الرئيسية</a>
+    </div>
+  </header>
+
+  <main class="mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
+    <div class="mb-6">
+      <h1 class="text-2xl font-extrabold text-slate-900">تسجيل الأساتذة</h1>
+      <p class="text-sm text-slate-500">استمارة تسجيل بيانات الأستاذ — يرجى تعبئة الحقول بدقة</p>
+    </div>
+
+    <form id="teacher-form" class="space-y-8">
+      <p id="form-error" class="hidden rounded-lg border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700"></p>
+      <p id="form-success" class="hidden rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-semibold text-emerald-700"></p>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">صورة الأستاذ</h2>
+        <div class="flex flex-col items-center gap-3 sm:flex-row">
+          <input type="file" id="photo-input" accept="image/*" class="hidden" />
+          <label for="photo-input" class="group relative flex w-28 aspect-[3/4] cursor-pointer items-center justify-center overflow-hidden rounded-2xl border-2 border-dashed border-slate-300 bg-slate-50 transition hover:border-brand-400">
+            <img id="photo-preview" src="" alt="" class="hidden h-full w-full object-cover" />
+            <span id="photo-placeholder-icon" class="flex flex-col items-center gap-1 text-slate-400">
+              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+              <span class="text-[11px] font-semibold">إضافة صورة</span>
+            </span>
+            <span class="absolute inset-0 hidden items-center justify-center bg-black/40 text-white group-hover:flex">
+              <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2Z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+            </span>
+          </label>
+          <input type="hidden" name="photo_url" id="photo_url_hidden" />
+          <p id="photo-upload-status" class="text-xs text-slate-400"></p>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">المعلومات الشخصية</h2>
+        <p class="mb-2 text-xs font-bold text-slate-400">الاسم الرباعي</p>
+        <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-4">
+          <div><label class="lbl">الاسم الأول</label><input required maxlength="15" class="inp" name="teacher_first_name" /></div>
+          <div><label class="lbl">الاسم الثاني</label><input required maxlength="15" class="inp" name="teacher_second_name" /></div>
+          <div><label class="lbl">الاسم الثالث</label><input required maxlength="15" class="inp" name="teacher_third_name" /></div>
+          <div><label class="lbl">الاسم الرابع</label><input required maxlength="15" class="inp" name="teacher_fourth_name" /></div>
+        </div>
+        <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div><label class="lbl">اللقب</label><input required maxlength="15" class="inp" name="teacher_surname" /></div>
+          <div><label class="lbl">تاريخ التولد</label><input required type="date" class="inp" name="date_of_birth" /></div>
+        </div>
+        <p class="mb-2 text-xs font-bold text-slate-400">اسم الأم الثلاثي</p>
+        <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div><label class="lbl">الاسم الأول</label><input required maxlength="15" class="inp" name="mother_first_name" /></div>
+          <div><label class="lbl">الاسم الثاني</label><input required maxlength="15" class="inp" name="mother_second_name" /></div>
+          <div><label class="lbl">الاسم الثالث</label><input required maxlength="15" class="inp" name="mother_third_name" /></div>
+        </div>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div><label class="lbl">محل الولادة</label><input maxlength="30" class="inp" name="place_of_birth" /></div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">وثيقة التعريف</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+          <div>
+            <label class="lbl">نوع الهوية</label>
+            <select required class="inp" name="id_type">
+              <option value="بطاقة وطنية">بطاقة وطنية</option>
+              <option value="شهادة جنسية">شهادة جنسية</option>
+            </select>
+          </div>
+          <div><label class="lbl">بلد الإصدار</label><input maxlength="30" class="inp" name="issuing_country" value="العراق" /></div>
+          <div><label class="lbl">رقم البطاقة الوطنية</label><input required dir="ltr" inputmode="numeric" maxlength="15" class="inp" name="national_card_number" /></div>
+          <div><label class="lbl">الرقم الوظيفي</label><input dir="ltr" maxlength="15" class="inp" name="employee_number" /></div>
+          <div><label class="lbl">الرقم العائلي</label><input dir="ltr" maxlength="15" class="inp" name="family_number" /></div>
+          <div><label class="lbl">مسقط الرأس</label><input maxlength="30" class="inp" name="birthplace" /></div>
+          <div>
+            <label class="lbl">الحالة الاجتماعية</label>
+            <select class="inp" name="marital_status">
+              <option value="">—</option>
+              <option value="أعزب">أعزب</option>
+              <option value="متزوج">متزوج</option>
+              <option value="مطلق">مطلق</option>
+              <option value="أرمل">أرمل</option>
+            </select>
+          </div>
+          <div>
+            <label class="lbl">فئة الدم</label>
+            <select class="inp" name="blood_type" id="blood_type"><option value="">—</option></select>
+          </div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">بيانات المعلم والعنوان الوظيفي</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div>
+            <label class="lbl">نوع التوظيف</label>
+            <select required class="inp" name="employment_type" id="employment_type"><option value="">—</option></select>
+          </div>
+          <div>
+            <label class="lbl">نوع الموظف</label>
+            <select required class="inp" name="employee_type" id="employee_type"><option value="">—</option></select>
+          </div>
+          <div>
+            <label class="lbl">المسمى الوظيفي</label>
+            <select required class="inp" name="job_title" id="job_title"><option value="">—</option></select>
+          </div>
+          <div><label class="lbl">العنوان الوظيفي</label><input maxlength="50" class="inp" name="job_address" /></div>
+          <div><label class="lbl">المنصب الحالي</label><input maxlength="30" class="inp" name="current_position" /></div>
+          <div><label class="lbl">تاريخ اول تعيين</label><input type="date" class="inp" name="first_appointment_date" /></div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">التحصيل الدراسي</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div><label class="lbl">اسم الكلية أو المعهد</label><input maxlength="60" class="inp" name="college_name" /></div>
+          <div><label class="lbl">سنة التخرج</label><input dir="ltr" inputmode="numeric" pattern="^[0-9]{4}$" title="سنة مكونة من 4 أرقام" maxlength="4" class="inp" name="graduation_year" /></div>
+          <div><label class="lbl">الاختصاص</label><input maxlength="40" class="inp" name="specialization" /></div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">جهة الاتصال في حالة الطارئة</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+          <div><label class="lbl">اسم جهة الاتصال</label><input maxlength="30" class="inp" name="emergency_contact_name" /></div>
+          <div><label class="lbl">صلة جهة الاتصال</label><input maxlength="20" class="inp" name="emergency_contact_relation" /></div>
+          <div>
+            <label class="lbl">رقم جهة الاتصال</label>
+            <input dir="ltr" class="inp" name="emergency_contact_phone" inputmode="numeric" pattern="^07[0-9]{9}$" title="11 رقماً يبدأ بـ 07" maxlength="11" />
+          </div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">المكان (العنوان)</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div><label class="lbl">المدينة / قرية</label><input maxlength="30" class="inp" name="city_village" /></div>
+          <div><label class="lbl">الحي</label><input maxlength="30" class="inp" name="neighborhood" /></div>
+          <div><label class="lbl">محلة</label><input maxlength="20" class="inp" name="mahalla" /></div>
+          <div><label class="lbl">زقاق</label><input maxlength="5" class="inp" name="alley" /></div>
+          <div><label class="lbl">عنوان 1</label><input maxlength="60" class="inp" name="address_line" /></div>
+          <div><label class="lbl">اقرب نقطة دالة</label><input maxlength="50" class="inp" name="nearest_landmark" /></div>
+        </div>
+      </section>
+
+      <section class="rounded-2xl border border-slate-200 bg-white p-4 sm:p-6">
+        <h2 class="mb-4 text-base font-bold text-slate-900">معلومات الاتصال</h2>
+        <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+          <div><label class="lbl">البريد الإلكتروني</label><input required type="email" dir="ltr" maxlength="100" class="inp" name="email" /></div>
+          <div>
+            <label class="lbl">رقم هاتف المعلم</label>
+            <input required dir="ltr" class="inp" name="phone" inputmode="numeric" pattern="^07[0-9]{9}$" title="11 رقماً يبدأ بـ 07" maxlength="11" />
+          </div>
+        </div>
+      </section>
+
+      <div class="flex justify-end gap-3">
+        <button type="submit" id="submit-btn" class="w-full rounded-xl bg-brand-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 disabled:opacity-50 sm:w-auto">
+          إرسال طلب التسجيل
+        </button>
+      </div>
+    </form>
+
+    <footer class="no-print mt-6 pb-4 text-center text-xs text-slate-400">
+      حقوق برمجة النظام محفوظة الاستاذ علي محمد علي ❤️
+    </footer>
+  </main>
+
+  <style>
+    .lbl { display: block; margin-bottom: 0.25rem; font-size: 0.875rem; font-weight: 600; color: #334155; }
+    .inp { width: 100%; border-radius: 0.5rem; border: 1px solid #e2e8f0; background: #fff; padding: 0.5rem 0.75rem; font-size: 0.875rem; outline: none; transition: 0.15s; }
+    .inp:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+  </style>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/photo-upload.js"></script>
+  <script src="js/teacher-form.js"></script>
+</body>
+</html>

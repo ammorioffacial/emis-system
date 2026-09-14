@@ -35,10 +35,10 @@ function renderStudentPhoto(s) {
 
 function renderStudent(s) {
   renderStudentPhoto(s);
-  setText(
-    "student-full-name",
-    `${s.student_first_name} ${s.student_second_name} ${s.student_third_name} ${s.student_fourth_name ?? ""} ${s.student_surname}`.replace(/\s+/g, " ").trim()
-  );
+  const fullName = `${s.student_first_name} ${s.student_second_name} ${s.student_third_name} ${s.student_fourth_name ?? ""} ${s.student_surname}`
+    .replace(/\s+/g, " ")
+    .trim();
+  setText("student-full-name", fullName);
   setText("f-dob", formatDob(s.date_of_birth));
   setText("f-mother-full-name", `${s.mother_first_name} ${s.mother_second_name} ${s.mother_third_name}`);
   setText("f-blood-type", s.blood_type);
@@ -94,7 +94,9 @@ function renderStudent(s) {
   document.getElementById("header-grade").textContent = `🎓 ${s.current_grade ?? "—"}${s.section ? " - شعبة " + s.section : ""}`;
   document.getElementById("header-statistical-number").textContent = s.statistical_number ? `🔢 الرقم الإحصائي: ${s.statistical_number}` : "";
 
-  document.title = `${s.student_first_name} ${s.student_surname} - نظام EMIS`;
+  // Drives the filename Chrome/Edge suggest in the print dialog's "Save
+  // as PDF" flow — the person's full name instead of a generic title.
+  document.title = fullName;
 }
 
 // ---------------------------------------------------------------------

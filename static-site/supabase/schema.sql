@@ -297,3 +297,167 @@ create policy "Anyone can view student photos"
   on storage.objects for select
   to public
   using (bucket_id = 'student-photos');
+
+-- =====================================================================
+-- Teachers (تسجيل الأساتذة) — a public, no-login registration form.
+-- Anyone can INSERT (anon key, no Supabase Auth session needed); only
+-- an authenticated admin can read/update/delete, same pattern as the
+-- students table's role-based policies.
+-- =====================================================================
+
+drop type if exists teacher_employment_type cascade;
+drop type if exists teacher_employee_type cascade;
+drop type if exists teacher_job_title cascade;
+
+create type teacher_employment_type as enum ('permanent', 'contract', 'lecturer', 'daily_wage', 'other_assignment'); -- ملاك دائم / عقد / محاضر / أجير / تكليف آخر
+create type teacher_employee_type as enum ('teaching', 'administrative', 'technical', 'service');                    -- تدريسي / إداري / فني / خدمي
+create type teacher_job_title as enum (
+  'first_teacher',            -- معلم اول
+  'second_teacher',           -- معلم ثاني
+  'third_teacher',            -- معلم ثالث
+  'technical_manager',        -- مدير فني
+  'senior_technical_manager', -- مدير فني اقدم
+  'deputy_technical_manager', -- معاون مدير فني
+  'manager'                   -- مدير
+);
+
+create table if not exists public.teachers (
+  id uuid primary key default gen_random_uuid(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+
+  -- المعلومات الشخصية
+  teacher_first_name  text not null,
+  teacher_second_name text not null,
+  teacher_third_name  text not null,
+  teacher_fourth_name text not null,
+  teacher_surname     text not null,
+  mother_first_name   text not null,
+  mother_second_name  text not null,
+  mother_third_name   text not null,
+  date_of_birth date not null,
+  place_of_birth text,       -- محل الولادة
+
+  -- وثيقة التعريف
+  id_type text,
+  issuing_country text,
+  national_card_number text not null,
+  employee_number text,
+  family_number text,
+  birthplace text,           -- مسقط الرأس
+  marital_status text,
+  blood_type blood_type,
+
+  -- بيانات المعلم والعنوان
+  employment_type teacher_employment_type not null,
+  employee_type teacher_employee_type not null,
+  job_title teacher_job_title not null,
+  job_address text,
+  current_position text,
+  first_appointment_date date,
+
+  -- التحصيل الدراسي
+  college_name text,
+  graduation_year text,
+  specialization text,
+
+  -- جهة الاتصال في حالة الطارئة
+  emergency_contact_name text,
+  emergency_contact_relation text,
+  emergency_contact_phone text,
+
+  -- المكان (العنوان)
+  city_village text,
+  neighborhood text,
+  mahalla text,
+  alley text,
+  address_line text,
+  nearest_landmark text,
+
+  -- الاتصال
+  email text not null,
+  phone text not null,
+
+  photo_url text
+);
+
+comment on table public.teachers is 'Public teacher registration records for EMIS (تسجيل الأساتذة)';
+
+drop trigger if exists trg_teachers_updated_at on public.teachers;
+create trigger trg_teachers_updated_at
+before update on public.teachers
+for each row execute function public.set_updated_at();
+
+create index if not exists idx_teachers_created_at on public.teachers (created_at desc);
+create index if not exists idx_teachers_surname on public.teachers (teacher_surname);
+
+alter table public.teachers enable row level security;
+
+drop policy if exists "Anyone can register as a teacher" on public.teachers;
+drop policy if exists "Admins can read teachers" on public.teachers;
+drop policy if exists "Admins can update teachers" on public.teachers;
+drop policy if exists "Admins can delete teachers" on public.teachers;
+
+create policy "Anyone can register as a teacher"
+  on public.teachers for insert
+  to anon, authenticated
+  with check (true);
+
+create policy "Admins can read teachers"
+  on public.teachers for select
+  to authenticated
+  using (coalesce(auth.jwt() -> 'app_metadata' ->> 'role', 'admin') = 'admin');
+
+create policy "Admins can update teachers"
+  on public.teachers for update
+  to authenticated
+  using (coalesce(auth.jwt() -> 'app_metadata' ->> 'role', 'admin') = 'admin')
+  with check (coalesce(auth.jwt() -> 'app_metadata' ->> 'role', 'admin') = 'admin');
+
+create policy "Admins can delete teachers"
+  on public.teachers for delete
+  to authenticated
+  using (coalesce(auth.jwt() -> 'app_metadata' ->> 'role', 'admin') = 'admin');
+
+create or replace view public.teacher_stats as
+select
+  count(*) as total_teachers,
+  count(*) filter (where created_at >= date_trunc('month', now())) as new_registrations_this_month,
+  count(*) filter (where employee_type = 'teaching') as teaching_count,
+  count(*) filter (where employment_type = 'permanent') as permanent_count
+from public.teachers;
+
+grant select on public.teacher_stats to authenticated;
+
+-- Storage bucket for teacher photos — public read, and unlike student
+-- photos, insert must also be open to the public (anon), since the
+-- registration form has no login.
+
+insert into storage.buckets (id, name, public)
+values ('teacher-photos', 'teacher-photos', true)
+on conflict (id) do nothing;
+
+drop policy if exists "Anyone can upload teacher photos" on storage.objects;
+drop policy if exists "Authenticated users can update teacher photos" on storage.objects;
+drop policy if exists "Authenticated users can delete teacher photos" on storage.objects;
+drop policy if exists "Anyone can view teacher photos" on storage.objects;
+
+create policy "Anyone can upload teacher photos"
+  on storage.objects for insert
+  to anon, authenticated
+  with check (bucket_id = 'teacher-photos');
+
+create policy "Authenticated users can update teacher photos"
+  on storage.objects for update
+  to authenticated
+  using (bucket_id = 'teacher-photos');
+
+create policy "Authenticated users can delete teacher photos"
+  on storage.objects for delete
+  to authenticated
+  using (bucket_id = 'teacher-photos');
+
+create policy "Anyone can view teacher photos"
+  on storage.objects for select
+  to public
+  using (bucket_id = 'teacher-photos');

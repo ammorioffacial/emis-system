@@ -153,3 +153,69 @@ async function updateStudentPhotoUrl(id, photoUrl) {
   const { error } = await window.supabaseClient.from("students").update({ photo_url: photoUrl }).eq("id", id);
   if (error) throw error;
 }
+
+// ---------------------------------------------------------------------
+// Teachers data access — insertTeacher/uploadTeacherPhoto are callable
+// with no signed-in session at all (public registration form, RLS
+// grants INSERT to the anon role); everything else requires an admin
+// session per the "Admins can read/update/delete teachers" policies.
+// ---------------------------------------------------------------------
+
+async function insertTeacher(payload) {
+  const { data, error } = await window.supabaseClient
+    .from("teachers")
+    .insert(payload)
+    .select("id")
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+async function uploadTeacherPhoto(file) {
+  const ext = (file.name.split(".").pop() || "jpg").toLowerCase();
+  const path = `${crypto.randomUUID()}.${ext}`;
+
+  const { error } = await window.supabaseClient.storage.from("teacher-photos").upload(path, file, {
+    cacheControl: "3600",
+    upsert: false,
+  });
+  if (error) throw error;
+
+  const { data } = window.supabaseClient.storage.from("teacher-photos").getPublicUrl(path);
+  return data.publicUrl;
+}
+
+async function fetchTeachers() {
+  const { data, error } = await window.supabaseClient
+    .from("teachers")
+    .select("*")
+    .order("created_at", { ascending: false });
+  if (error) throw error;
+  return data ?? [];
+}
+
+async function fetchTeacherById(id) {
+  const { data, error } = await window.supabaseClient
+    .from("teachers")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error) throw error;
+  return data;
+}
+
+async function fetchTeacherStats() {
+  const { data, error } = await window.supabaseClient
+    .from("teacher_stats")
+    .select("*")
+    .single();
+  if (error) {
+    return { total_teachers: 0, new_registrations_this_month: 0, teaching_count: 0, permanent_count: 0 };
+  }
+  return data;
+}
+
+async function deleteTeacher(id) {
+  const { error } = await window.supabaseClient.from("teachers").delete().eq("id", id);
+  if (error) throw error;
+}

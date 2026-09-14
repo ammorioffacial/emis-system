@@ -71,3 +71,33 @@ const GRADES_BY_STAGE = {
   intermediate: ["الأول المتوسط", "الثاني المتوسط", "الثالث المتوسط"],
   preparatory: ["الرابع الإعدادي", "الخامس الإعدادي", "السادس الإعدادي"],
 };
+
+// ---------------------------------------------------------------------
+// Teacher registration (تسجيل الأساتذة)
+// ---------------------------------------------------------------------
+const TEACHER_EMPLOYMENT_TYPE_LABELS = {
+  permanent: "ملاك دائم",
+  contract: "عقد",
+  lecturer: "محاضر",
+  daily_wage: "أجير",
+  other_assignment: "تكليف آخر",
+};
+
+const TEACHER_EMPLOYEE_TYPE_LABELS = {
+  teaching: "تدريسي",
+  administrative: "إداري",
+  technical: "فني",
+  service: "خدمي",
+};
+
+const TEACHER_JOB_TITLE_LABELS = {
+  first_teacher: "معلم اول",
+  second_teacher: "معلم ثاني",
+  third_teacher: "معلم ثالث",
+  technical_manager: "مدير فني",
+  senior_technical_manager: "مدير فني اقدم",
+  deputy_technical_manager: "معاون مدير فني",
+  manager: "مدير",
+};
+
+const MARITAL_STATUS_OPTIONS = ["أعزب", "متزوج", "مطلق", "أرمل"];

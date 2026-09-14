@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>لوحة التحكم - نظام EMIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="font-tajawal bg-slate-50 text-slate-900 antialiased">
+  <!-- Shown until the auth/role check in dashboard.js resolves, so a
+       data_entry user redirected away never sees a flash of dashboard
+       content (stats, table, nav) before navigating off. -->
+  <div id="auth-loading" class="flex min-h-screen items-center justify-center">
+    <div class="h-8 w-8 animate-spin rounded-full border-4 border-brand-200 border-t-brand-600"></div>
+  </div>
+
+  <div id="app-root" style="display:none">
+  <!-- Mobile topbar (hidden on lg+, where the sidebar takes over) -->
+  <header class="no-print flex items-center justify-between border-b border-slate-200 bg-white px-4 py-3 lg:hidden">
+    <div class="flex items-center gap-2">
+      <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-600 text-sm font-bold text-white">E</div>
+      <p class="text-sm font-bold">نظام EMIS</p>
+    </div>
+    <button id="mobile-menu-btn" class="rounded-lg border border-slate-200 p-2 text-slate-600" aria-label="القائمة">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"></line><line x1="4" y1="12" x2="20" y2="12"></line><line x1="4" y1="17" x2="20" y2="17"></line></svg>
+    </button>
+  </header>
+
+  <!-- Mobile nav drawer -->
+  <div id="mobile-drawer" class="no-print fixed inset-0 z-50 hidden lg:hidden">
+    <div id="mobile-drawer-backdrop" class="absolute inset-0 bg-slate-900/50"></div>
+    <div class="absolute inset-y-0 right-0 flex w-72 max-w-[85%] flex-col bg-white shadow-xl">
+      <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
+        <p class="text-sm font-bold">نظام EMIS</p>
+        <button id="mobile-drawer-close" class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100" aria-label="إغلاق">✕</button>
+      </div>
+      <nav class="flex flex-1 flex-col gap-1 px-3 py-4">
+        <a href="dashboard.html" class="rounded-lg bg-brand-50 px-3 py-2.5 text-sm font-medium text-brand-700">لوحة التحكم</a>
+        <a href="add-student.html" class="rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 hover:bg-brand-50 hover:text-brand-700">إضافة طالب جديد</a>
+      </nav>
+      <div class="border-t border-slate-100 px-5 py-4">
+        <button id="logout-btn-mobile" class="text-xs font-semibold text-slate-500 hover:text-rose-600">تسجيل الخروج</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="flex min-h-screen">
+    <!-- Sidebar (desktop only) -->
+    <aside class="no-print hidden w-64 shrink-0 border-l border-slate-200 bg-white lg:flex lg:flex-col">
+      <div class="flex items-center gap-3 border-b border-slate-100 px-6 py-5">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-600 text-white text-xl font-bold">E</div>
+        <div>
+          <p class="text-sm font-bold leading-tight">نظام EMIS</p>
+          <p class="text-xs text-slate-500">إدارة الطلاب</p>
+        </div>
+      </div>
+      <nav class="flex flex-1 flex-col gap-1 px-3 py-4">
+        <a href="dashboard.html" class="flex items-center gap-3 rounded-lg bg-brand-50 px-3 py-2.5 text-sm font-medium text-brand-700">لوحة التحكم</a>
+        <a href="add-student.html" class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-brand-50 hover:text-brand-700">إضافة طالب جديد</a>
+      </nav>
+      <div class="border-t border-slate-100 px-6 py-4">
+        <button id="logout-btn" class="text-xs font-semibold text-slate-500 hover:text-rose-600">تسجيل الخروج</button>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 p-4 sm:p-6 lg:p-8">
+      <div class="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between">
+        <div class="flex items-center justify-between gap-3 sm:block">
+          <div>
+            <h1 id="page-heading" class="text-xl font-extrabold text-slate-900 sm:text-2xl">لوحة التحكم</h1>
+            <p id="page-subheading" class="text-xs text-slate-500 sm:text-sm">نظرة عامة على بيانات الطلاب المسجلين</p>
+          </div>
+          <!-- Small clock pill: sits beside the title on phones, moves into the button row at sm+ -->
+          <div class="clock-pill flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-3 py-1.5 shadow-sm backdrop-blur-xl sm:order-3 sm:px-3.5 sm:py-2">
+            <span class="text-sm">🕐</span>
+            <span id="clock-time" class="font-mono text-sm font-bold tracking-wide text-slate-800">--:--</span>
+            <span class="hidden h-3 w-px bg-slate-300 sm:block"></span>
+            <span id="clock-dates" class="hidden whitespace-nowrap text-xs font-medium text-slate-500 sm:inline"></span>
+          </div>
+        </div>
+        <div class="grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
+          <button id="export-btn" class="flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-emerald-700">
+            تصدير إلى Excel
+          </button>
+          <a href="add-student.html" class="flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700">
+            إضافة طالب
+          </a>
+        </div>
+      </div>
+
+      <!-- Students / Teachers tab switch -->
+      <div class="no-print mb-6 inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
+        <button id="tab-students" class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold transition">🎓 الطلاب</button>
+        <button id="tab-teachers" class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold transition">👨‍🏫 الأساتذة</button>
+      </div>
+
+      <!-- ================= STUDENTS VIEW ================= -->
+      <div id="students-view">
+        <!-- Stat cards -->
+        <div class="mb-6 grid grid-cols-2 gap-3 sm:mb-8 sm:gap-4 lg:grid-cols-4">
+          <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-blue-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="flex items-center gap-2.5 sm:gap-4">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-blue-100 text-blue-600 font-bold shadow-inner transition group-hover:scale-110">Σ</div>
+              <div>
+                <p id="stat-total" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+                <p class="text-xs text-slate-500 sm:text-sm">إجمالي الطلاب</p>
+              </div>
+            </div>
+            <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-blue-200/30 blur-xl"></span>
+          </div>
+          <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-amber-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="flex items-center gap-2.5 sm:gap-4">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-amber-100 text-amber-600 font-bold shadow-inner transition group-hover:scale-110">+</div>
+              <div>
+                <p id="stat-new" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+                <p class="text-xs text-slate-500 sm:text-sm">تسجيلات هذا الشهر</p>
+              </div>
+            </div>
+            <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-amber-200/30 blur-xl"></span>
+          </div>
+          <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-emerald-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="flex items-center gap-2.5 sm:gap-4">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-emerald-100 text-emerald-600 font-bold shadow-inner transition group-hover:scale-110">✓</div>
+              <div>
+                <p id="stat-passed" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+                <p class="text-xs text-slate-500 sm:text-sm">عدد الناجحين</p>
+              </div>
+            </div>
+            <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-emerald-200/30 blur-xl"></span>
+          </div>
+          <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-rose-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="flex items-center gap-2.5 sm:gap-4">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-rose-100 text-rose-600 font-bold shadow-inner transition group-hover:scale-110">✕</div>
+              <div>
+                <p id="stat-failed" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+                <p class="text-xs text-slate-500 sm:text-sm">عدد الراسبين</p>
+              </div>
+            </div>
+            <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-rose-200/30 blur-xl"></span>
+          </div>
+        </div>
+
+        <!-- Students table -->
+        <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="flex flex-col gap-3 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <h2 class="text-lg font-bold text-slate-900">سجل الطلاب</h2>
+            <input id="search-input" placeholder="بحث باسم الطالب..."
+              class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100 sm:w-72" />
+          </div>
+
+          <!-- Advanced filters -->
+          <div class="border-b border-slate-100 p-4 sm:p-5">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div>
+                <label class="mb-1 block text-xs font-semibold text-slate-500">تاريخ التسجيل من</label>
+                <input id="filter-date-from" type="date"
+                  class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-brand-500 focus:bg-white" />
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-semibold text-slate-500">إلى</label>
+                <input id="filter-date-to" type="date"
+                  class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-brand-500 focus:bg-white" />
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-semibold text-slate-500">الحالة الدراسية</label>
+                <select id="filter-academic-status"
+                  class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-brand-500 focus:bg-white">
+                  <option value="">الكل</option>
+                  <option value="passed">ناجح</option>
+                  <option value="failed">راسب</option>
+                  <option value="new_registration">تسجيل جديد</option>
+                </select>
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-semibold text-slate-500">سنة الميلاد</label>
+                <input id="filter-birth-year" type="number" placeholder="مثال: 2015" min="1990" max="2030"
+                  class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-brand-500 focus:bg-white" />
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-semibold text-slate-500">الصف والشعبة</label>
+                <select id="filter-grade-section"
+                  class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-brand-500 focus:bg-white">
+                  <option value="">الكل</option>
+                </select>
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-semibold text-slate-500">المدرسة السابقة</label>
+                <select id="filter-previous-school"
+                  class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-brand-500 focus:bg-white">
+                  <option value="">الكل</option>
+                </select>
+              </div>
+              <div>
+                <label class="mb-1 block text-xs font-semibold text-slate-500">حالة الرعاية الاجتماعية</label>
+                <select id="filter-social-welfare-status"
+                  class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm outline-none transition focus:border-brand-500 focus:bg-white">
+                  <option value="">الكل</option>
+                  <option value="yes">مشمول</option>
+                  <option value="no">غير مشمول</option>
+                </select>
+              </div>
+              <div class="flex flex-col justify-end gap-2">
+                <label class="flex items-center gap-2 text-xs font-semibold text-slate-500">
+                  <input id="filter-social-care" type="checkbox" class="h-4 w-4 rounded border-slate-300 text-brand-600 focus:ring-brand-500" />
+                  تحت خط الفقر / الرعاية الاجتماعية
+                </label>
+                <button id="filter-clear-btn" class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-500 transition hover:bg-slate-50">
+                  مسح الفلاتر
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Table (sm+): a 7-column table needs real width, so it's hidden on phones in favor of the card list below -->
+          <div class="hidden overflow-x-auto sm:block">
+            <table class="w-full min-w-[720px] text-sm">
+              <thead>
+                <tr class="border-b border-slate-100 bg-slate-50 text-slate-500">
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">اسم الطالب</th>
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">الصف الحالي</th>
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">الشعبة</th>
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">نتيجة العام السابق</th>
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">هاتف ولي الأمر</th>
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">تاريخ التسجيل</th>
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="students-tbody">
+                <tr><td colspan="7" class="px-5 py-10 text-center text-slate-400">جارٍ التحميل...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Card list (phones only) -->
+          <div id="students-mobile-list" class="divide-y divide-slate-100 sm:hidden">
+            <p class="px-4 py-10 text-center text-sm text-slate-400">جارٍ التحميل...</p>
+          </div>
+        </div>
+
+        <!-- Analytics panel (الإحصائيات الشاملة) -->
+        <div class="analytics-section relative mt-8 overflow-hidden rounded-3xl p-4 sm:p-6">
+          <span class="analytics-blob analytics-blob-blue"></span>
+          <span class="analytics-blob analytics-blob-violet"></span>
+          <span class="analytics-blob analytics-blob-emerald"></span>
+
+          <div class="relative mb-4 flex items-center gap-2">
+            <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white/70 text-brand-600 shadow-sm backdrop-blur">📊</span>
+            <h2 class="text-lg font-extrabold text-slate-900">الإحصائيات الشاملة</h2>
+          </div>
+
+          <div id="analytics-panel" class="relative grid grid-cols-1 gap-4 lg:grid-cols-3">
+            <div class="glass-card group rounded-2xl border border-white/60 bg-white/70 p-5 shadow-lg shadow-slate-200/60 backdrop-blur-xl transition duration-200 hover:-translate-y-1 hover:shadow-xl">
+              <h3 class="mb-3 flex items-center gap-2 text-sm font-bold text-slate-900">
+                <span class="h-2 w-2 rounded-full bg-blue-500"></span>
+                أعداد الطلاب حسب الصف والشعبة
+              </h3>
+              <div class="relative h-64">
+                <canvas id="chart-grade-section"></canvas>
+                <div id="chart-grade-section-empty" class="chart-empty-state hidden"><span>📭</span><p>لا توجد بيانات كافية بعد</p></div>
+              </div>
+            </div>
+            <div class="glass-card group rounded-2xl border border-white/60 bg-white/70 p-5 shadow-lg shadow-slate-200/60 backdrop-blur-xl transition duration-200 hover:-translate-y-1 hover:shadow-xl">
+              <h3 class="mb-3 flex items-center gap-2 text-sm font-bold text-slate-900">
+                <span class="h-2 w-2 rounded-full bg-violet-500"></span>
+                ذوو الاحتياجات الخاصة حسب النوع
+              </h3>
+              <div class="relative h-64">
+                <canvas id="chart-special-needs"></canvas>
+                <div id="chart-special-needs-empty" class="chart-empty-state hidden"><span>📭</span><p>لا توجد بيانات كافية بعد</p></div>
+              </div>
+            </div>
+            <div class="glass-card group rounded-2xl border border-white/60 bg-white/70 p-5 shadow-lg shadow-slate-200/60 backdrop-blur-xl transition duration-200 hover:-translate-y-1 hover:shadow-xl">
+              <h3 class="mb-3 flex items-center gap-2 text-sm font-bold text-slate-900">
+                <span class="h-2 w-2 rounded-full bg-emerald-500"></span>
+                أعداد الطلاب حسب المدرسة السابقة
+              </h3>
+              <div class="relative h-64">
+                <canvas id="chart-previous-school"></canvas>
+                <div id="chart-previous-school-empty" class="chart-empty-state hidden"><span>📭</span><p>لا توجد بيانات كافية بعد</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= TEACHERS VIEW ================= -->
+      <div id="teachers-view" class="hidden">
+        <div class="mb-6 grid grid-cols-2 gap-3 sm:mb-8 sm:gap-4 lg:grid-cols-4">
+          <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-blue-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="flex items-center gap-2.5 sm:gap-4">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-blue-100 text-blue-600 font-bold shadow-inner transition group-hover:scale-110">Σ</div>
+              <div>
+                <p id="teacher-stat-total" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+                <p class="text-xs text-slate-500 sm:text-sm">إجمالي الأساتذة</p>
+              </div>
+            </div>
+            <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-blue-200/30 blur-xl"></span>
+          </div>
+          <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-amber-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="flex items-center gap-2.5 sm:gap-4">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-amber-100 text-amber-600 font-bold shadow-inner transition group-hover:scale-110">+</div>
+              <div>
+                <p id="teacher-stat-new" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+                <p class="text-xs text-slate-500 sm:text-sm">تسجيلات هذا الشهر</p>
+              </div>
+            </div>
+            <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-amber-200/30 blur-xl"></span>
+          </div>
+          <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-emerald-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="flex items-center gap-2.5 sm:gap-4">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-emerald-100 text-emerald-600 font-bold shadow-inner transition group-hover:scale-110">🎓</div>
+              <div>
+                <p id="teacher-stat-teaching" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+                <p class="text-xs text-slate-500 sm:text-sm">تدريسيون</p>
+              </div>
+            </div>
+            <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-emerald-200/30 blur-xl"></span>
+          </div>
+          <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-violet-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="flex items-center gap-2.5 sm:gap-4">
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-violet-100 text-violet-600 font-bold shadow-inner transition group-hover:scale-110">🔒</div>
+              <div>
+                <p id="teacher-stat-permanent" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
+                <p class="text-xs text-slate-500 sm:text-sm">ملاك دائم</p>
+              </div>
+            </div>
+            <span class="pointer-events-none absolute -left-4 -top-4 h-16 w-16 rounded-full bg-violet-200/30 blur-xl"></span>
+          </div>
+        </div>
+
+        <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <div class="flex flex-col gap-3 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
+            <h2 class="text-lg font-bold text-slate-900">طلبات تسجيل الأساتذة</h2>
+            <input id="teacher-search-input" placeholder="بحث باسم الأستاذ..."
+              class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100 sm:w-72" />
+          </div>
+
+          <div class="hidden overflow-x-auto sm:block">
+            <table class="w-full min-w-[720px] text-sm">
+              <thead>
+                <tr class="border-b border-slate-100 bg-slate-50 text-slate-500">
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">اسم الأستاذ</th>
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">نوع التوظيف</th>
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">المسمى الوظيفي</th>
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">رقم الهاتف</th>
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">تاريخ التسجيل</th>
+                  <th class="px-3 py-3 text-start font-semibold sm:px-5">إجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="teachers-tbody">
+                <tr><td colspan="6" class="px-5 py-10 text-center text-slate-400">جارٍ التحميل...</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div id="teachers-mobile-list" class="divide-y divide-slate-100 sm:hidden">
+            <p class="px-4 py-10 text-center text-sm text-slate-400">جارٍ التحميل...</p>
+          </div>
+        </div>
+      </div>
+
+      <footer class="no-print mt-6 pb-2 text-center text-xs text-slate-400">
+        حقوق برمجة النظام محفوظة الاستاذ علي محمد علي ❤️
+      </footer>
+    </main>
+  </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/export-excel.js"></script>
+  <script src="js/dashboard.js"></script>
+  <script src="js/kpi-tilt.js"></script>
+  <script src="js/clock-widget.js"></script>
+  <script src="js/mobile-nav.js"></script>
+</body>
+</html>

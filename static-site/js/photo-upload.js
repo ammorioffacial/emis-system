@@ -1,8 +1,10 @@
-// Wires the circular avatar upload control used on add-student.html and
-// editable-form.html: shows an immediate local preview, uploads to the
-// `student-photos` Supabase Storage bucket in the background, and stores
-// the resulting public URL in a hidden `photo_url` form field.
-function initPhotoUpload() {
+// Wires the circular avatar upload control used on add-student.html,
+// editable-form.html, and teacher-register.html: shows an immediate
+// local preview, uploads to a Supabase Storage bucket in the
+// background, and stores the resulting public URL in a hidden
+// `photo_url` form field. Defaults to the student-photos bucket;
+// pass uploadTeacherPhoto for the teacher registration form.
+function initPhotoUpload(uploadFn = uploadStudentPhoto) {
   const input = document.getElementById("photo-input");
   const preview = document.getElementById("photo-preview");
   const placeholder = document.getElementById("photo-placeholder-icon");
@@ -22,7 +24,7 @@ function initPhotoUpload() {
     if (statusEl) statusEl.textContent = "جارٍ رفع الصورة...";
 
     try {
-      const url = await uploadStudentPhoto(file);
+      const url = await uploadFn(file);
       hiddenField.value = url;
       if (statusEl) statusEl.textContent = "تم رفع الصورة بنجاح";
     } catch (err) {

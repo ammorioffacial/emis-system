@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>بيانات الأستاذ - نظام EMIS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="js/tailwind-config.js"></script>
+  <link rel="stylesheet" href="css/styles.css" />
+  <style>
+    /* Same print/layout rules as student.html, so both print artifacts
+       look consistent (single A4 page, identical card/field styling). */
+    .field-unit {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+      text-align: right;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+    .field-label { font-size: 0.75rem; font-weight: 500; color: #6b7280; }
+    .field-value { font-size: 0.875rem; font-weight: 700; color: #111827; min-height: 1.25rem; word-break: break-word; }
+
+    .photo-frame {
+      position: relative;
+      width: 85px;
+      height: 85px;
+      border-radius: 0.75rem;
+      border: 2px solid #e5e7eb;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+      overflow: hidden;
+      flex-shrink: 0;
+      background: #f8fafc;
+    }
+    .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 5mm;
+      }
+      html, body {
+        height: 100vh !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+        background: #ffffff !important;
+        font-size: 11.5px !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .no-print { display: none !important; }
+
+      .print-container {
+        max-height: 275mm;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        padding-left: 0;
+        padding-right: 0;
+        page-break-after: avoid;
+      }
+      .print-container > * + * { margin-top: 0 !important; }
+
+      .print-card {
+        padding: 14px 18px !important;
+        margin-bottom: 10px !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 6px !important;
+        box-shadow: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .field-grid {
+        display: grid !important;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 8px 14px !important;
+      }
+      .field-unit { gap: 3px !important; page-break-inside: avoid; break-inside: avoid; }
+      .field-label { font-size: 10.5px !important; margin-bottom: 3px; opacity: 0.8; }
+      .field-value { font-size: 12.5px !important; font-weight: 700 !important; min-height: 0 !important; line-height: 1.25 !important; }
+      .field-value[dir="ltr"] { white-space: nowrap; }
+
+      h1 { font-size: 18px !important; }
+      h2, h3, h4 { font-size: 14px !important; font-weight: bold !important; margin-bottom: 10px !important; }
+
+      .photo-frame { width: 75px !important; height: 75px !important; }
+
+      .print-signatures {
+        margin-top: 12px !important;
+        margin-bottom: 0 !important;
+        padding-top: 8px !important;
+        page-break-before: avoid !important;
+        break-inside: avoid !important;
+      }
+      .print-signatures > div { padding-top: 4px !important; gap: 12px !important; }
+      .print-signatures .border-t { margin-top: 8px !important; }
+    }
+  </style>
+</head>
+<body class="font-tajawal bg-slate-100 text-slate-900 antialiased">
+  <div class="min-h-screen py-8">
+    <div class="no-print mx-auto mb-6 flex max-w-4xl flex-col gap-3 px-4 sm:flex-row sm:items-center sm:justify-between">
+      <a href="dashboard.html" class="flex items-center gap-2 text-sm font-medium text-slate-600 hover:text-brand-700">→ العودة إلى لوحة التحكم</a>
+      <div id="teacher-actions" class="flex flex-wrap items-center gap-3"></div>
+    </div>
+
+    <div id="loading-state" class="mx-auto max-w-4xl px-4 text-center text-slate-400">جارٍ التحميل...</div>
+
+    <!-- ================= TEACHER VIEW (populated by js/teacher-print.js) ================= -->
+    <div id="print-area" class="print-area print-container mx-auto hidden max-w-4xl space-y-4 px-4">
+      <div class="print-card flex flex-col items-center gap-4 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:flex-row sm:items-center">
+        <div class="photo-frame">
+          <img id="teacher-photo" src="" alt="" class="hidden" />
+          <div id="teacher-photo-placeholder" class="flex h-full w-full items-center justify-center text-3xl text-slate-300">
+            👤
+          </div>
+        </div>
+        <div class="text-center sm:text-right">
+          <h1 id="teacher-full-name" class="text-xl font-extrabold text-slate-900"></h1>
+          <p class="mt-1 text-sm text-slate-500">استمارة تسجيل الأساتذة لنظام EMIS</p>
+        </div>
+        <div class="mt-2 flex flex-wrap justify-center gap-2 text-xs font-semibold text-slate-500 sm:mr-auto sm:mt-0 sm:justify-end">
+          <span id="header-date" class="rounded-full bg-slate-100 px-3 py-1"></span>
+          <span id="header-job-title" class="rounded-full bg-slate-800 px-3 py-1 text-white"></span>
+        </div>
+      </div>
+
+      <div class="print-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-base font-bold text-slate-900">المعلومات الشخصية</h2>
+        <div class="field-grid grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div class="field-unit"><p class="field-label">تاريخ التولد</p><p class="field-value" id="f-dob"></p></div>
+          <div class="field-unit"><p class="field-label">محل الولادة</p><p class="field-value" id="f-place-of-birth"></p></div>
+          <div class="field-unit"><p class="field-label">الحالة الاجتماعية</p><p class="field-value" id="f-marital-status"></p></div>
+          <div class="field-unit"><p class="field-label">فئة الدم</p><p class="field-value" id="f-blood-type"></p></div>
+          <div class="field-unit"><p class="field-label">اسم الأم الثلاثي</p><p class="field-value" id="f-mother-full-name"></p></div>
+        </div>
+      </div>
+
+      <div class="print-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-base font-bold text-slate-900">وثيقة التعريف</h2>
+        <div class="field-grid grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div class="field-unit"><p class="field-label">نوع الهوية</p><p class="field-value" id="f-id-type"></p></div>
+          <div class="field-unit"><p class="field-label">بلد الإصدار</p><p class="field-value" id="f-issuing-country"></p></div>
+          <div class="field-unit"><p class="field-label">رقم البطاقة الوطنية</p><p class="field-value" dir="ltr" id="f-national-card"></p></div>
+          <div class="field-unit"><p class="field-label">الرقم الوظيفي</p><p class="field-value" dir="ltr" id="f-employee-number"></p></div>
+          <div class="field-unit"><p class="field-label">الرقم العائلي</p><p class="field-value" dir="ltr" id="f-family-number"></p></div>
+          <div class="field-unit"><p class="field-label">مسقط الرأس</p><p class="field-value" id="f-birthplace"></p></div>
+        </div>
+      </div>
+
+      <div class="print-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-base font-bold text-slate-900">بيانات الوظيفة</h2>
+        <div class="field-grid grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div class="field-unit"><p class="field-label">نوع التوظيف</p><p class="field-value" id="f-employment-type"></p></div>
+          <div class="field-unit"><p class="field-label">نوع الموظف</p><p class="field-value" id="f-employee-type"></p></div>
+          <div class="field-unit"><p class="field-label">المسمى الوظيفي</p><p class="field-value" id="f-job-title"></p></div>
+          <div class="field-unit"><p class="field-label">العنوان الوظيفي</p><p class="field-value" id="f-job-address"></p></div>
+          <div class="field-unit"><p class="field-label">المنصب الحالي</p><p class="field-value" id="f-current-position"></p></div>
+          <div class="field-unit"><p class="field-label">تاريخ اول تعيين</p><p class="field-value" id="f-first-appointment"></p></div>
+        </div>
+      </div>
+
+      <div class="print-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-base font-bold text-slate-900">التحصيل الدراسي</h2>
+        <div class="field-grid grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div class="field-unit"><p class="field-label">اسم الكلية أو المعهد</p><p class="field-value" id="f-college"></p></div>
+          <div class="field-unit"><p class="field-label">سنة التخرج</p><p class="field-value" dir="ltr" id="f-graduation-year"></p></div>
+          <div class="field-unit"><p class="field-label">الاختصاص</p><p class="field-value" id="f-specialization"></p></div>
+        </div>
+      </div>
+
+      <div class="print-card rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="mb-4 text-base font-bold text-slate-900">العنوان وجهة الاتصال</h2>
+        <div class="field-grid grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+          <div class="field-unit"><p class="field-label">المدينة / قرية</p><p class="field-value" id="f-city"></p></div>
+          <div class="field-unit"><p class="field-label">الحي</p><p class="field-value" id="f-neighborhood"></p></div>
+          <div class="field-unit"><p class="field-label">المحلة</p><p class="field-value" id="f-mahalla"></p></div>
+          <div class="field-unit"><p class="field-label">الزقاق</p><p class="field-value" id="f-alley"></p></div>
+          <div class="field-unit"><p class="field-label">العنوان</p><p class="field-value" id="f-address-line"></p></div>
+          <div class="field-unit"><p class="field-label">اقرب نقطة دالة</p><p class="field-value" id="f-landmark"></p></div>
+          <div class="field-unit"><p class="field-label">البريد الإلكتروني</p><p class="field-value" dir="ltr" id="f-email"></p></div>
+          <div class="field-unit"><p class="field-label">رقم الهاتف</p><p class="field-value" dir="ltr" id="f-phone"></p></div>
+          <div class="field-unit"><p class="field-label">جهة الاتصال في حالة الطارئة</p><p class="field-value" id="f-emergency-name"></p></div>
+          <div class="field-unit"><p class="field-label">صلة القرابة</p><p class="field-value" id="f-emergency-relation"></p></div>
+          <div class="field-unit"><p class="field-label">هاتف جهة الاتصال</p><p class="field-value" dir="ltr" id="f-emergency-phone"></p></div>
+        </div>
+      </div>
+
+      <div class="print-card print-signatures rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="grid grid-cols-1 gap-8 pt-6 text-center sm:grid-cols-2">
+          <div>
+            <p class="text-sm font-bold text-slate-800">مسؤول وحدة EMIS: أ.علي محمد علي</p>
+            <div class="mx-auto mt-8 w-40 border-t border-slate-400"></div>
+            <p class="mt-1 text-xs text-slate-400">التوقيع</p>
+          </div>
+          <div>
+            <p class="text-sm font-bold text-slate-800">توقيع مدير المدرسة</p>
+            <div class="mx-auto mt-8 w-40 border-t border-slate-400"></div>
+            <p class="mt-1 text-xs text-slate-400">التوقيع</p>
+          </div>
+        </div>
+      </div>
+
+      <p class="no-print pb-4 text-center text-xs text-slate-400">حقوق برمجة النظام محفوظة الاستاذ علي محمد علي ❤️</p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/supabase-client.js"></script>
+  <script src="js/constants.js"></script>
+  <script src="js/teacher-print.js"></script>
+</body>
+</html>

@@ -21,15 +21,44 @@ function formatDateEn(date) {
 function renderTeacherPhoto(t) {
   const img = document.getElementById("teacher-photo");
   const placeholder = document.getElementById("teacher-photo-placeholder");
+  const downloadBtn = document.getElementById("download-photo-btn");
   if (t.photo_url) {
     img.src = t.photo_url;
     img.alt = `${t.teacher_first_name} ${t.teacher_surname}`;
     img.classList.remove("hidden");
     placeholder.classList.add("hidden");
+    downloadBtn.classList.remove("hidden");
   } else {
     img.classList.add("hidden");
     placeholder.classList.remove("hidden");
+    downloadBtn.classList.add("hidden");
   }
+}
+
+/**
+ * Supabase Storage's public URLs are cross-origin, and browsers ignore
+ * <a download> for cross-origin links (it just opens the image instead
+ * of saving it) — fetching as a blob and downloading that blob: URL
+ * (same-origin) works around this reliably.
+ */
+async function downloadImageFromUrl(url, filename) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("تعذر جلب الصورة");
+  const blob = await response.blob();
+  const blobUrl = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(blobUrl);
+}
+
+function photoFileExtension(url) {
+  const match = /\.([a-zA-Z0-9]+)(?:\?.*)?$/.exec(url);
+  return match ? match[1] : "jpg";
 }
 
 function renderTeacher(t) {
@@ -109,6 +138,19 @@ async function init() {
       </button>
     `;
     document.getElementById("print-btn").addEventListener("click", () => window.print());
+
+    if (teacher.photo_url) {
+      const downloadBtn = document.getElementById("download-photo-btn");
+      downloadBtn.addEventListener("click", async () => {
+        const name = `${teacher.teacher_first_name} ${teacher.teacher_second_name} ${teacher.teacher_third_name} ${teacher.teacher_fourth_name}`.trim();
+        try {
+          const ext = photoFileExtension(teacher.photo_url);
+          await downloadImageFromUrl(teacher.photo_url, `${name}.${ext}`);
+        } catch (err) {
+          alert("تعذر تحميل الصورة: " + err.message);
+        }
+      });
+    }
   } catch (err) {
     loadingEl.textContent = `تعذر تحميل بيانات الأستاذ: ${err.message}`;
   }

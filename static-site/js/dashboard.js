@@ -336,6 +336,13 @@ function renderTeachers(teachers) {
               <a href="teacher.html?id=${t.id}" class="flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700" title="طباعة الاستمارة">
                 🖨 طباعة
               </a>
+              ${
+                t.photo_url
+                  ? `<button class="download-photo-btn flex items-center gap-1.5 rounded-lg border border-indigo-200 px-2.5 py-1.5 text-xs font-semibold text-indigo-600 transition hover:border-indigo-400 hover:bg-indigo-50" data-photo-url="${t.photo_url}" data-teacher-id="${t.id}" title="تحميل الصورة">
+                      📥 الصورة
+                    </button>`
+                  : ""
+              }
               <button class="delete-teacher-btn flex items-center gap-1.5 rounded-lg border border-rose-200 px-2.5 py-1.5 text-xs font-semibold text-rose-600 transition hover:border-rose-400 hover:bg-rose-50" data-teacher-id="${t.id}" title="حذف الأستاذ">
                 🗑 حذف
               </button>
@@ -365,6 +372,13 @@ function renderTeachers(teachers) {
             <a href="teacher.html?id=${t.id}" class="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-xs font-semibold text-slate-600 active:bg-slate-100" title="طباعة الاستمارة">
               🖨 طباعة
             </a>
+            ${
+              t.photo_url
+                ? `<button class="download-photo-btn flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-indigo-200 py-2 text-xs font-semibold text-indigo-600 active:bg-indigo-100" data-photo-url="${t.photo_url}" data-teacher-id="${t.id}" title="تحميل الصورة">
+                    📥 الصورة
+                  </button>`
+                : ""
+            }
             <button class="delete-teacher-btn flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-rose-200 py-2 text-xs font-semibold text-rose-600 active:bg-rose-100" data-teacher-id="${t.id}" title="حذف الأستاذ">
               🗑 حذف
             </button>
@@ -373,6 +387,33 @@ function renderTeachers(teachers) {
       `;
     })
     .join("");
+}
+
+/**
+ * Supabase Storage's public URLs are cross-origin from this page, and
+ * browsers ignore the <a download> attribute for cross-origin links —
+ * clicking it just opens the image instead of saving it. Fetching the
+ * image as a blob and downloading that blob: URL (same-origin) works
+ * around this reliably.
+ */
+async function downloadImageFromUrl(url, filename) {
+  const response = await fetch(url);
+  if (!response.ok) throw new Error("تعذر جلب الصورة");
+  const blob = await response.blob();
+  const blobUrl = URL.createObjectURL(blob);
+
+  const link = document.createElement("a");
+  link.href = blobUrl;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  URL.revokeObjectURL(blobUrl);
+}
+
+function photoFileExtension(url) {
+  const match = /\.([a-zA-Z0-9]+)(?:\?.*)?$/.exec(url);
+  return match ? match[1] : "jpg";
 }
 
 function applyTeacherSearch() {
@@ -454,9 +495,32 @@ function initTabs() {
 
   document.getElementById("teacher-search-input").addEventListener("input", applyTeacherSearch);
 
-  function handleTeacherRowClick(e) {
+  async function handleTeacherRowClick(e) {
     const deleteBtn = e.target.closest(".delete-teacher-btn");
-    if (deleteBtn) handleDeleteTeacher(deleteBtn.dataset.teacherId);
+    if (deleteBtn) {
+      handleDeleteTeacher(deleteBtn.dataset.teacherId);
+      return;
+    }
+
+    const downloadBtn = e.target.closest(".download-photo-btn");
+    if (downloadBtn) {
+      const teacher = allTeachers.find((t) => t.id === downloadBtn.dataset.teacherId);
+      const name = teacher
+        ? `${teacher.teacher_first_name} ${teacher.teacher_second_name} ${teacher.teacher_third_name} ${teacher.teacher_fourth_name}`.trim()
+        : "استاذ";
+      const originalText = downloadBtn.innerHTML;
+      downloadBtn.disabled = true;
+      downloadBtn.textContent = "جارٍ التحميل...";
+      try {
+        const ext = photoFileExtension(downloadBtn.dataset.photoUrl);
+        await downloadImageFromUrl(downloadBtn.dataset.photoUrl, `${name}.${ext}`);
+      } catch (err) {
+        alert("تعذر تحميل الصورة: " + err.message);
+      } finally {
+        downloadBtn.disabled = false;
+        downloadBtn.innerHTML = originalText;
+      }
+    }
   }
   document.getElementById("teachers-tbody").addEventListener("click", handleTeacherRowClick);
   document.getElementById("teachers-mobile-list").addEventListener("click", handleTeacherRowClick);

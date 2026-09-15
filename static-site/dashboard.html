@@ -37,7 +37,9 @@
     <div class="absolute inset-y-0 right-0 flex w-72 max-w-[85%] flex-col bg-white shadow-xl">
       <div class="flex items-center justify-between border-b border-slate-100 px-5 py-4">
         <p class="text-sm font-bold">نظام EMIS</p>
-        <button id="mobile-drawer-close" class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100" aria-label="إغلاق">✕</button>
+        <button id="mobile-drawer-close" class="rounded-lg p-1.5 text-slate-500 hover:bg-slate-100" aria-label="إغلاق">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
       </div>
       <nav class="flex flex-1 flex-col gap-1 px-3 py-4">
         <a href="dashboard.html" class="rounded-lg bg-brand-50 px-3 py-2.5 text-sm font-medium text-brand-700">لوحة التحكم</a>
@@ -78,7 +80,7 @@
           </div>
           <!-- Small clock pill: sits beside the title on phones, moves into the button row at sm+ -->
           <div class="clock-pill flex items-center gap-2 rounded-full border border-white/60 bg-white/70 px-3 py-1.5 shadow-sm backdrop-blur-xl sm:order-3 sm:px-3.5 sm:py-2">
-            <span class="text-sm">🕐</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
             <span id="clock-time" class="font-mono text-sm font-bold tracking-wide text-slate-800">--:--</span>
             <span class="hidden h-3 w-px bg-slate-300 sm:block"></span>
             <span id="clock-dates" class="hidden whitespace-nowrap text-xs font-medium text-slate-500 sm:inline"></span>
@@ -96,8 +98,14 @@
 
       <!-- Students / Teachers tab switch -->
       <div class="no-print mb-6 inline-flex rounded-xl border border-slate-200 bg-white p-1 shadow-sm">
-        <button id="tab-students" class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold transition">🎓 الطلاب</button>
-        <button id="tab-teachers" class="tab-btn rounded-lg px-4 py-2 text-sm font-semibold transition">👨‍🏫 الأساتذة</button>
+        <button id="tab-students" class="tab-btn flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12.5V17c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"></path></svg>
+          الطلاب
+        </button>
+        <button id="tab-teachers" class="tab-btn flex items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-semibold transition">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path><path d="M2 13h20"></path></svg>
+          الأساتذة
+        </button>
       </div>
 
       <!-- ================= STUDENTS VIEW ================= -->
@@ -106,7 +114,7 @@
         <div class="mb-6 grid grid-cols-2 gap-3 sm:mb-8 sm:gap-4 lg:grid-cols-4">
           <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-blue-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
             <div class="flex items-center gap-2.5 sm:gap-4">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-blue-100 text-blue-600 font-bold shadow-inner transition group-hover:scale-110">Σ</div>
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-blue-100 text-blue-600 font-bold shadow-inner transition group-hover:scale-110"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
               <div>
                 <p id="stat-total" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
                 <p class="text-xs text-slate-500 sm:text-sm">إجمالي الطلاب</p>
@@ -116,7 +124,7 @@
           </div>
           <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-amber-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
             <div class="flex items-center gap-2.5 sm:gap-4">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-amber-100 text-amber-600 font-bold shadow-inner transition group-hover:scale-110">+</div>
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-amber-100 text-amber-600 font-bold shadow-inner transition group-hover:scale-110"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></div>
               <div>
                 <p id="stat-new" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
                 <p class="text-xs text-slate-500 sm:text-sm">تسجيلات هذا الشهر</p>
@@ -126,7 +134,7 @@
           </div>
           <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-emerald-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
             <div class="flex items-center gap-2.5 sm:gap-4">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-emerald-100 text-emerald-600 font-bold shadow-inner transition group-hover:scale-110">✓</div>
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-emerald-100 text-emerald-600 font-bold shadow-inner transition group-hover:scale-110"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
               <div>
                 <p id="stat-passed" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
                 <p class="text-xs text-slate-500 sm:text-sm">عدد الناجحين</p>
@@ -136,7 +144,7 @@
           </div>
           <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-rose-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
             <div class="flex items-center gap-2.5 sm:gap-4">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-rose-100 text-rose-600 font-bold shadow-inner transition group-hover:scale-110">✕</div>
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-rose-100 text-rose-600 font-bold shadow-inner transition group-hover:scale-110"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg></div>
               <div>
                 <p id="stat-failed" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
                 <p class="text-xs text-slate-500 sm:text-sm">عدد الراسبين</p>
@@ -250,7 +258,9 @@
           <span class="analytics-blob analytics-blob-emerald"></span>
 
           <div class="relative mb-4 flex items-center gap-2">
-            <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white/70 text-brand-600 shadow-sm backdrop-blur">📊</span>
+            <span class="flex h-8 w-8 items-center justify-center rounded-xl bg-white/70 text-brand-600 shadow-sm backdrop-blur">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            </span>
             <h2 class="text-lg font-extrabold text-slate-900">الإحصائيات الشاملة</h2>
           </div>
 
@@ -262,7 +272,7 @@
               </h3>
               <div class="relative h-64">
                 <canvas id="chart-grade-section"></canvas>
-                <div id="chart-grade-section-empty" class="chart-empty-state hidden"><span>📭</span><p>لا توجد بيانات كافية بعد</p></div>
+                <div id="chart-grade-section-empty" class="chart-empty-state hidden"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"></path></svg><p>لا توجد بيانات كافية بعد</p></div>
               </div>
             </div>
             <div class="glass-card group rounded-2xl border border-white/60 bg-white/70 p-5 shadow-lg shadow-slate-200/60 backdrop-blur-xl transition duration-200 hover:-translate-y-1 hover:shadow-xl">
@@ -272,7 +282,7 @@
               </h3>
               <div class="relative h-64">
                 <canvas id="chart-special-needs"></canvas>
-                <div id="chart-special-needs-empty" class="chart-empty-state hidden"><span>📭</span><p>لا توجد بيانات كافية بعد</p></div>
+                <div id="chart-special-needs-empty" class="chart-empty-state hidden"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"></path></svg><p>لا توجد بيانات كافية بعد</p></div>
               </div>
             </div>
             <div class="glass-card group rounded-2xl border border-white/60 bg-white/70 p-5 shadow-lg shadow-slate-200/60 backdrop-blur-xl transition duration-200 hover:-translate-y-1 hover:shadow-xl">
@@ -282,7 +292,7 @@
               </h3>
               <div class="relative h-64">
                 <canvas id="chart-previous-school"></canvas>
-                <div id="chart-previous-school-empty" class="chart-empty-state hidden"><span>📭</span><p>لا توجد بيانات كافية بعد</p></div>
+                <div id="chart-previous-school-empty" class="chart-empty-state hidden"><svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" style="opacity:.6"><polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline><path d="M5.45 5.11 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11Z"></path></svg><p>لا توجد بيانات كافية بعد</p></div>
               </div>
             </div>
           </div>
@@ -294,7 +304,7 @@
         <div class="mb-6 grid grid-cols-2 gap-3 sm:mb-8 sm:gap-4 lg:grid-cols-4">
           <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-blue-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
             <div class="flex items-center gap-2.5 sm:gap-4">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-blue-100 text-blue-600 font-bold shadow-inner transition group-hover:scale-110">Σ</div>
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-blue-100 text-blue-600 font-bold shadow-inner transition group-hover:scale-110"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></div>
               <div>
                 <p id="teacher-stat-total" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
                 <p class="text-xs text-slate-500 sm:text-sm">إجمالي الأساتذة</p>
@@ -304,7 +314,7 @@
           </div>
           <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-amber-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
             <div class="flex items-center gap-2.5 sm:gap-4">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-amber-100 text-amber-600 font-bold shadow-inner transition group-hover:scale-110">+</div>
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-amber-100 text-amber-600 font-bold shadow-inner transition group-hover:scale-110"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></div>
               <div>
                 <p id="teacher-stat-new" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
                 <p class="text-xs text-slate-500 sm:text-sm">تسجيلات هذا الشهر</p>
@@ -314,7 +324,7 @@
           </div>
           <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-emerald-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
             <div class="flex items-center gap-2.5 sm:gap-4">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-emerald-100 text-emerald-600 font-bold shadow-inner transition group-hover:scale-110">🎓</div>
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-emerald-100 text-emerald-600 font-bold shadow-inner transition group-hover:scale-110"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10 12 5 2 10l10 5 10-5Z"></path><path d="M6 12.5V17c0 1.5 2.7 3 6 3s6-1.5 6-3v-4.5"></path></svg></div>
               <div>
                 <p id="teacher-stat-teaching" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
                 <p class="text-xs text-slate-500 sm:text-sm">تدريسيون</p>
@@ -324,7 +334,7 @@
           </div>
           <div class="kpi-card group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-white to-violet-50/60 p-3.5 shadow-sm transition duration-200 sm:p-5 hover:-translate-y-0.5 hover:shadow-lg">
             <div class="flex items-center gap-2.5 sm:gap-4">
-              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-violet-100 text-violet-600 font-bold shadow-inner transition group-hover:scale-110">🔒</div>
+              <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl text-sm sm:h-12 sm:w-12 sm:text-base bg-violet-100 text-violet-600 font-bold shadow-inner transition group-hover:scale-110"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></div>
               <div>
                 <p id="teacher-stat-permanent" class="text-xl font-extrabold text-slate-900 sm:text-2xl">0</p>
                 <p class="text-xs text-slate-500 sm:text-sm">ملاك دائم</p>
@@ -340,8 +350,9 @@
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
               <input id="teacher-search-input" placeholder="بحث باسم الأستاذ..."
                 class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100 sm:w-64" />
-              <a id="print-all-teachers-btn" href="teachers-print-all.html" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700">
-                🖨 طباعة الكل PDF
+              <a id="print-all-teachers-btn" href="teachers-print-all.html" target="_blank" rel="noopener" class="flex items-center justify-center gap-1.5 whitespace-nowrap rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700">
+                <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                طباعة الكل PDF
               </a>
             </div>
           </div>
@@ -383,6 +394,7 @@
   <script src="js/config.js"></script>
   <script src="js/supabase-client.js"></script>
   <script src="js/constants.js"></script>
+  <script src="js/icons.js"></script>
   <script src="js/export-excel.js"></script>
   <script src="js/dashboard.js"></script>
   <script src="js/kpi-tilt.js"></script>

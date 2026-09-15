@@ -236,11 +236,16 @@ function initDuplicateCheck(form) {
   const warningEl = document.getElementById("duplicate-warning");
   if (!warningEl) return;
 
+  function setWarningVisible(visible) {
+    warningEl.classList.toggle("hidden", !visible);
+    warningEl.classList.toggle("flex", visible);
+  }
+
   let debounceTimer;
   async function checkForDuplicate() {
     const values = nameFields.map((name) => form.elements.namedItem(name)?.value.trim() ?? "");
     if (values.some((v) => !v)) {
-      warningEl.classList.add("hidden");
+      setWarningVisible(false);
       return;
     }
 
@@ -257,7 +262,7 @@ function initDuplicateCheck(form) {
         .limit(1);
 
       if (error) return; // best-effort: RLS/network errors just skip the warning
-      warningEl.classList.toggle("hidden", !(data && data.length > 0));
+      setWarningVisible(Boolean(data && data.length > 0));
     } catch {
       // best-effort only
     }

@@ -45,7 +45,7 @@ function buildTeacherPage(t) {
   const motherName = `${t.mother_first_name} ${t.mother_second_name} ${t.mother_third_name}`;
   const photoHtml = t.photo_url
     ? `<img src="${escapeHtml(t.photo_url)}" alt="" class="h-full w-full object-cover" />`
-    : `<div class="flex h-full w-full items-center justify-center text-3xl text-slate-300">👤</div>`;
+    : `<div class="flex h-full w-full items-center justify-center text-slate-300">${icon("user", { size: 30 })}</div>`;
 
   return `
     <div class="teacher-print-page">
@@ -56,8 +56,8 @@ function buildTeacherPage(t) {
           <p class="mt-1 text-sm text-slate-500">استمارة تسجيل الأساتذة لنظام EMIS</p>
         </div>
         <div class="mt-2 flex flex-wrap justify-center gap-2 text-xs font-semibold text-slate-500 sm:mr-auto sm:mt-0 sm:justify-end">
-          <span class="rounded-full bg-slate-100 px-3 py-1">📅 ${formatDateEn(new Date())}</span>
-          <span class="rounded-full bg-slate-800 px-3 py-1 text-white">🎓 ${escapeHtml(TEACHER_JOB_TITLE_LABELS[t.job_title])}</span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1">${icon("calendar", { size: 13 })} ${formatDateEn(new Date())}</span>
+          <span class="inline-flex items-center gap-1 rounded-full bg-slate-800 px-3 py-1 text-white">${icon("graduationCap", { size: 13 })} ${escapeHtml(TEACHER_JOB_TITLE_LABELS[t.job_title])}</span>
         </div>
       </div>
 
@@ -175,7 +175,7 @@ async function init() {
 
     document.getElementById("page-actions").innerHTML = `
       <button id="print-btn" class="flex items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700">
-        🖨 طباعة / حفظ الكل PDF
+        ${icon("printer", { size: 16 })} طباعة / حفظ الكل PDF
       </button>
       <span class="text-xs text-slate-400">${teachers.length} استمارة</span>
     `;

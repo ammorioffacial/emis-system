@@ -103,8 +103,8 @@ function renderTeacher(t) {
   setText("f-emergency-relation", t.emergency_contact_relation);
   setText("f-emergency-phone", t.emergency_contact_phone);
 
-  document.getElementById("header-date").textContent = `📅 ${formatDateEn(new Date())}`;
-  document.getElementById("header-job-title").textContent = `🎓 ${TEACHER_JOB_TITLE_LABELS[t.job_title] ?? "—"}`;
+  document.getElementById("header-date").innerHTML = `${icon("calendar", { size: 14 })} ${formatDateEn(new Date())}`;
+  document.getElementById("header-job-title").innerHTML = `${icon("graduationCap", { size: 14 })} ${TEACHER_JOB_TITLE_LABELS[t.job_title] ?? "—"}`;
 
   // Drives the filename Chrome/Edge suggest in the print dialog's "Save
   // as PDF" flow — matches the request to auto-name the saved file
@@ -134,7 +134,7 @@ async function init() {
 
     document.getElementById("teacher-actions").innerHTML = `
       <button id="print-btn" class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 sm:flex-initial">
-        🖨 طباعة الاستمارة
+        ${icon("printer", { size: 16 })} طباعة الاستمارة
       </button>
     `;
     document.getElementById("print-btn").addEventListener("click", () => window.print());

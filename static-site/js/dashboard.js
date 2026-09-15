@@ -58,13 +58,13 @@ function renderStudents(students) {
           <td class="px-5 py-3">
             <div class="flex items-center gap-2">
               <a href="student.html?id=${s.id}" class="flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700" title="طباعة الاستمارة">
-                🖨 طباعة
+                ${icon("printer", { size: 14 })} طباعة
               </a>
               <a href="add-student.html?id=${s.id}" class="flex items-center gap-1.5 rounded-lg border border-amber-200 px-2.5 py-1.5 text-xs font-semibold text-amber-700 transition hover:border-amber-400 hover:bg-amber-50" title="تعديل بيانات الطالب">
-                ✏️ تعديل
+                ${icon("edit", { size: 14 })} تعديل
               </a>
               <button class="delete-row-btn flex items-center gap-1.5 rounded-lg border border-rose-200 px-2.5 py-1.5 text-xs font-semibold text-rose-600 transition hover:border-rose-400 hover:bg-rose-50" data-student-id="${s.id}" title="حذف الطالب">
-                🗑 حذف
+                ${icon("trash", { size: 14 })} حذف
               </button>
             </div>
           </td>
@@ -89,19 +89,19 @@ function renderStudents(students) {
             </span>
           </div>
           <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-            <span>🎓 ${s.current_grade ?? "—"}${s.section ? " - " + s.section : ""}</span>
-            <span dir="ltr">📞 ${s.guardian_phone ?? "—"}</span>
-            <span>📅 ${date}</span>
+            <span class="inline-flex items-center gap-1">${icon("graduationCap", { size: 13 })} ${s.current_grade ?? "—"}${s.section ? " - " + s.section : ""}</span>
+            <span class="inline-flex items-center gap-1" dir="ltr">${icon("phone", { size: 13 })} ${s.guardian_phone ?? "—"}</span>
+            <span class="inline-flex items-center gap-1">${icon("calendar", { size: 13 })} ${date}</span>
           </div>
           <div class="mt-1 flex items-center gap-2">
             <a href="student.html?id=${s.id}" class="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-xs font-semibold text-slate-600 active:bg-slate-100" title="طباعة الاستمارة">
-              🖨 طباعة
+              ${icon("printer", { size: 14 })} طباعة
             </a>
             <a href="add-student.html?id=${s.id}" class="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-amber-200 py-2 text-xs font-semibold text-amber-700 active:bg-amber-100" title="تعديل بيانات الطالب">
-              ✏️ تعديل
+              ${icon("edit", { size: 14 })} تعديل
             </a>
             <button class="delete-row-btn flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-rose-200 py-2 text-xs font-semibold text-rose-600 active:bg-rose-100" data-student-id="${s.id}" title="حذف الطالب">
-              🗑 حذف
+              ${icon("trash", { size: 14 })} حذف
             </button>
           </div>
         </div>
@@ -334,17 +334,17 @@ function renderTeachers(teachers) {
           <td class="px-5 py-3">
             <div class="flex items-center gap-2">
               <a href="teacher.html?id=${t.id}" class="flex items-center gap-1.5 rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs font-semibold text-slate-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700" title="طباعة الاستمارة">
-                🖨 طباعة
+                ${icon("printer", { size: 14 })} طباعة
               </a>
               ${
                 t.photo_url
                   ? `<button class="download-photo-btn flex items-center gap-1.5 rounded-lg border border-indigo-200 px-2.5 py-1.5 text-xs font-semibold text-indigo-600 transition hover:border-indigo-400 hover:bg-indigo-50" data-photo-url="${t.photo_url}" data-teacher-id="${t.id}" title="تحميل الصورة">
-                      📥 الصورة
+                      ${icon("download", { size: 14 })} الصورة
                     </button>`
                   : ""
               }
               <button class="delete-teacher-btn flex items-center gap-1.5 rounded-lg border border-rose-200 px-2.5 py-1.5 text-xs font-semibold text-rose-600 transition hover:border-rose-400 hover:bg-rose-50" data-teacher-id="${t.id}" title="حذف الأستاذ">
-                🗑 حذف
+                ${icon("trash", { size: 14 })} حذف
               </button>
             </div>
           </td>
@@ -364,23 +364,23 @@ function renderTeachers(teachers) {
             <span class="shrink-0 rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-600">${TEACHER_EMPLOYMENT_TYPE_LABELS[t.employment_type] ?? "—"}</span>
           </div>
           <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-            <span>💼 ${TEACHER_JOB_TITLE_LABELS[t.job_title] ?? "—"}</span>
-            <span dir="ltr">📞 ${t.phone ?? "—"}</span>
-            <span>📅 ${date}</span>
+            <span class="inline-flex items-center gap-1">${icon("briefcase", { size: 13 })} ${TEACHER_JOB_TITLE_LABELS[t.job_title] ?? "—"}</span>
+            <span class="inline-flex items-center gap-1" dir="ltr">${icon("phone", { size: 13 })} ${t.phone ?? "—"}</span>
+            <span class="inline-flex items-center gap-1">${icon("calendar", { size: 13 })} ${date}</span>
           </div>
           <div class="mt-1 flex items-center gap-2">
             <a href="teacher.html?id=${t.id}" class="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-slate-200 py-2 text-xs font-semibold text-slate-600 active:bg-slate-100" title="طباعة الاستمارة">
-              🖨 طباعة
+              ${icon("printer", { size: 14 })} طباعة
             </a>
             ${
               t.photo_url
                 ? `<button class="download-photo-btn flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-indigo-200 py-2 text-xs font-semibold text-indigo-600 active:bg-indigo-100" data-photo-url="${t.photo_url}" data-teacher-id="${t.id}" title="تحميل الصورة">
-                    📥 الصورة
+                    ${icon("download", { size: 14 })} الصورة
                   </button>`
                 : ""
             }
             <button class="delete-teacher-btn flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-rose-200 py-2 text-xs font-semibold text-rose-600 active:bg-rose-100" data-teacher-id="${t.id}" title="حذف الأستاذ">
-              🗑 حذف
+              ${icon("trash", { size: 14 })} حذف
             </button>
           </div>
         </div>

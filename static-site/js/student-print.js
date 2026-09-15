@@ -90,9 +90,11 @@ function renderStudent(s) {
   setText("f-guardian-phone", s.guardian_phone);
   setText("f-notes", s.notes);
 
-  document.getElementById("header-date").textContent = `📅 ${formatDateEn(new Date())}`;
-  document.getElementById("header-grade").textContent = `🎓 ${s.current_grade ?? "—"}${s.section ? " - شعبة " + s.section : ""}`;
-  document.getElementById("header-statistical-number").textContent = s.statistical_number ? `🔢 الرقم الإحصائي: ${s.statistical_number}` : "";
+  document.getElementById("header-date").innerHTML = `${icon("calendar", { size: 14 })} ${formatDateEn(new Date())}`;
+  document.getElementById("header-grade").innerHTML = `${icon("graduationCap", { size: 14 })} ${s.current_grade ?? "—"}${s.section ? " - شعبة " + s.section : ""}`;
+  document.getElementById("header-statistical-number").innerHTML = s.statistical_number
+    ? `${icon("hash", { size: 14 })} الرقم الإحصائي: ${s.statistical_number}`
+    : "";
 
   // Drives the filename Chrome/Edge suggest in the print dialog's "Save
   // as PDF" flow — the person's full name instead of a generic title.
@@ -207,7 +209,7 @@ async function init() {
     if (restricted) {
       document.getElementById("student-actions").innerHTML = `
         <button id="print-btn" class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 sm:flex-initial">
-          🖨 طباعة الاستمارة
+          ${icon("printer", { size: 16 })} طباعة الاستمارة
         </button>
       `;
       document.getElementById("print-btn").addEventListener("click", () => window.print());
@@ -217,10 +219,10 @@ async function init() {
     } else {
       document.getElementById("student-actions").innerHTML = `
         <a href="add-student.html?id=${student.id}" class="flex flex-1 items-center justify-center gap-2 rounded-xl border border-amber-500 px-4 py-2.5 text-sm font-semibold text-amber-700 shadow-sm transition hover:bg-amber-50 sm:flex-initial">
-          ✏️ تعديل بيانات الطالب
+          ${icon("edit", { size: 16 })} تعديل بيانات الطالب
         </a>
         <button id="print-btn" class="flex flex-1 items-center justify-center gap-2 rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-brand-700 sm:flex-initial">
-          🖨 طباعة الاستمارة
+          ${icon("printer", { size: 16 })} طباعة الاستمارة
         </button>
       `;
       document.getElementById("print-btn").addEventListener("click", () => window.print());

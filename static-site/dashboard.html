@@ -337,8 +337,13 @@
         <div class="rounded-2xl border border-slate-200 bg-white shadow-sm">
           <div class="flex flex-col gap-3 border-b border-slate-100 p-4 sm:flex-row sm:items-center sm:justify-between sm:p-5">
             <h2 class="text-lg font-bold text-slate-900">طلبات تسجيل الأساتذة</h2>
-            <input id="teacher-search-input" placeholder="بحث باسم الأستاذ..."
-              class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100 sm:w-72" />
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <input id="teacher-search-input" placeholder="بحث باسم الأستاذ..."
+                class="w-full rounded-lg border border-slate-200 bg-slate-50 py-2 px-3 text-sm outline-none transition focus:border-brand-500 focus:bg-white focus:ring-2 focus:ring-brand-100 sm:w-64" />
+              <a id="print-all-teachers-btn" href="teachers-print-all.html" target="_blank" rel="noopener" class="flex items-center justify-center gap-2 whitespace-nowrap rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold text-slate-600 transition hover:border-brand-300 hover:bg-brand-50 hover:text-brand-700">
+                🖨 طباعة الكل PDF
+              </a>
+            </div>
           </div>
 
           <div class="hidden overflow-x-auto sm:block">

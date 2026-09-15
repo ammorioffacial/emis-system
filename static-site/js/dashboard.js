@@ -2,6 +2,7 @@ let allStudents = [];
 let filteredStudents = [];
 let currentStats = null;
 let charts = {};
+let activeTab = "students";
 
 /** Formats a date with plain ASCII digits (avoids Arabic-Indic numerals from ar-EG locale). */
 function formatDateEn(dateStr) {
@@ -427,6 +428,7 @@ function initTabs() {
   const subheading = document.getElementById("page-subheading");
 
   function showStudents() {
+    activeTab = "students";
     studentsTab.classList.add("active");
     teachersTab.classList.remove("active");
     studentsView.classList.remove("hidden");
@@ -436,6 +438,7 @@ function initTabs() {
   }
 
   function showTeachers() {
+    activeTab = "teachers";
     teachersTab.classList.add("active");
     studentsTab.classList.remove("active");
     teachersView.classList.remove("hidden");
@@ -520,7 +523,12 @@ async function init() {
   document.getElementById("students-tbody").addEventListener("click", handleRowListClick);
   document.getElementById("students-mobile-list").addEventListener("click", handleRowListClick);
 
-  document.getElementById("export-btn").addEventListener("click", () => {
+  document.getElementById("export-btn").addEventListener("click", async () => {
+    if (activeTab === "teachers") {
+      if (!teachersLoaded) await loadTeachersTab();
+      exportTeachersToExcel(allTeachers, await fetchTeacherStats());
+      return;
+    }
     if (!currentStats) return;
     // Exports only the currently filtered/displayed set, not every record.
     exportStudentsToExcel(filteredStudents, currentStats);
